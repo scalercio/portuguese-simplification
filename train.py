@@ -11,7 +11,7 @@ from pytorch_lightning.loggers import TensorBoardLogger
 import copy
 import os
 
-from data import AmazonDataModule, get_raw_data
+from data import CCNetDataModule
 from model import (T5ForConditionalGenerationWithExtractor,
                    TextSettrModel)
 
@@ -36,7 +36,6 @@ if __name__ == '__main__':
     lambda_factor = 1
 
     tokenizer = T5TokenizerFast.from_pretrained("t5-base")
-    raw_data = get_raw_data()
 
     #model = T5ForConditionalGenerationWithExtractor.from_pretrained(
     #    "./pretrained_model/t5-base-with-extractor")
@@ -44,7 +43,7 @@ if __name__ == '__main__':
     #model.extractor.is_extractor = True
     #model.lambda_factor = lambda_factor
 
-    module = AmazonDataModule(raw_data, batch_size, tokenizer, sent_length)
+    module = CCNetDataModule(batch_size, tokenizer, sent_length)
 
     # training loop
     for lambda_val in [1e-4, 1e-3, 1e-2, 1e-1, 1, 1.5, 2]:
@@ -55,7 +54,7 @@ if __name__ == '__main__':
         model = TextSettrModel(lambda_val, sent_length, tokenizer)
         # checkpoint_callback = pl.callbacks.ModelCheckpoint(dirpath=root, filename='{epoch}')
         checkpoint_callback = pl.callbacks.ModelCheckpoint(monitor="val_loss")
-        logger = TensorBoardLogger("logs", name="style_transfer")
+        logger = TensorBoardLogger("logs", name="textual_simplification")
         trainer = Trainer(max_epochs = 10, default_root_dir='./', val_check_interval=0.25, precision=32, logger=logger)
         #trainer = Trainer(max_epochs=10, gpus=8, default_root_dir="", val_check_interval=0.25,
         #                  precision=32, logger=logger, plugins=[HFAIEnvironment()], callbacks=[cb])
