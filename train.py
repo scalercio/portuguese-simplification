@@ -4,10 +4,13 @@
 #from hfai.pl import HFAIEnvironment
 import numpy as np
 import torch
+torch.set_float32_matmul_precision('medium')
 from transformers import T5TokenizerFast
 import pytorch_lightning as pl
 from pytorch_lightning import Trainer
-from pytorch_lightning.loggers import TensorBoardLogger
+#import wandb
+from lightning.pytorch.loggers import WandbLogger
+#from pytorch_lightning.loggers import TensorBoardLogger
 import copy
 import os
 
@@ -31,11 +34,10 @@ if __name__ == '__main__':
     torch.manual_seed(rand_seed)
 
     # hyperparameters
-    sent_length = 32
-    batch_size = 64
-    lambda_factor = 1
+    batch_size = 32
+    sent_length = 32    
 
-    tokenizer = T5TokenizerFast.from_pretrained("t5-base")
+    tokenizer = T5TokenizerFast.from_pretrained("unicamp-dl/ptt5-base-t5-vocab")
 
     #model = T5ForConditionalGenerationWithExtractor.from_pretrained(
     #    "./pretrained_model/t5-base-with-extractor")
@@ -46,16 +48,29 @@ if __name__ == '__main__':
     module = CCNetDataModule(batch_size, tokenizer, sent_length)
 
     # training loop
-    for lambda_val in [1e-4, 1e-3, 1e-2, 1e-1, 1, 1.5, 2]:
-        # 加入幻方AI api
-        output_dir = 'hfai_out'
-        #cb = ModelCheckpointHF(dirpath=output_dir)
+    lambda_val = 1e-3
+    config = {
+        'sent_length': sent_length,
+        'batch_size': batch_size,
+        'lambda_factor': 1, # ver onde usa
+        'lambda_val': lambda_val,
+        'model_version': 'ptt5-base'
+    }
+    output_dir = 'paraphrase-and-llm'
+    logger = WandbLogger(
+        project="simplification-pt",
+        job_type=f'ptt5-base_{sent_length:03d}',
+        config=config            
+    )
+        
 
-        model = TextSettrModel(lambda_val, sent_length, tokenizer)
-        # checkpoint_callback = pl.callbacks.ModelCheckpoint(dirpath=root, filename='{epoch}')
-        checkpoint_callback = pl.callbacks.ModelCheckpoint(monitor="val_loss")
-        logger = TensorBoardLogger("logs", name="textual_simplification")
-        trainer = Trainer(max_epochs = 10, default_root_dir='./', val_check_interval=0.25, precision=32, logger=logger)
+
+    model = TextSettrModel(config['lambda_val'], config['sent_length'], tokenizer)
+    # checkpoint_callback = pl.callbacks.ModelCheckpoint(dirpath=root, filename='{epoch}')
+    checkpoint_callback = pl.callbacks.ModelCheckpoint(monitor="val_loss")
+    #logger = TensorBoardLogger("logs", name="textual_simplification")
+    trainer = Trainer(max_epochs = 8, default_root_dir='./', val_check_interval=0.1, precision='bf16', logger=logger,
+                          devices = 1)
         #trainer = Trainer(max_epochs=10, gpus=8, default_root_dir="", val_check_interval=0.25,
         #                  precision=32, logger=logger, plugins=[HFAIEnvironment()], callbacks=[cb])
 
@@ -63,7 +78,7 @@ if __name__ == '__main__':
 
         #ckpt_path = f'{output_dir}/barlow-twins-lambda-{lambda_val}-{cb.CHECKPOINT_NAME_SUSPEND}.ckpt'
         #ckpt_path = ckpt_path if os.path.exists(ckpt_path) else None
-        trainer.fit(
-            model,
-            module
-        )
+    trainer.fit(
+        model,
+        module
+    )

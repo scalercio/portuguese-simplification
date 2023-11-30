@@ -1,23 +1,7 @@
 from torch.utils.data import Dataset, DataLoader
-from sklearn.model_selection import train_test_split
-import pandas as pd
 import ast
 import pytorch_lightning as pl
 import time
-
-
-def get_raw_data():
-    raw_data = pd.read_fwf("./data/sampled_999986.csv")
-    raw_data = raw_data[["sents"]]
-    # raw_data = raw_data.sample(n=5000, random_state = rand_seed)
-
-    print(raw_data["sents"].apply(lambda x: len(x) - 1).sum())
-    raw_data["cumlen"] = raw_data["sents"].apply(
-        lambda x: len(x) - 1).cumsum() - 1
-    raw_data["len"] = raw_data["sents"].apply(lambda x: len(x) - 1)
-    raw_data = raw_data.set_index("cumlen")
-
-    return raw_data
 
 
 class CCNetDataset(Dataset):
@@ -47,8 +31,8 @@ class CCNetDataModule(pl.LightningDataModule):
 
         train_src, train_tgt, train_tgt_context = self.read_insts('train')
         valid_src, valid_tgt, valid_tgt_context = self.read_insts('valid')
-        print('[Info] {} instances from train set'.format(len(self.train_src)))
-        print('[Info] {} instances from valid set'.format(len(self.valid_src)))
+        print('[Info] {} instances from train set'.format(len(train_src)))
+        print('[Info] {} instances from valid set'.format(len(valid_src)))
         
         self.train = CCNetDataset(
             train_src, train_tgt, train_tgt_context, tokenizer, sent_length)
@@ -73,7 +57,6 @@ class CCNetDataModule(pl.LightningDataModule):
         tgt_dir = 'data/ccnet/{}.{}'.format(mode, 'complex')
         tgt_context_dir = 'data/ccnet/{}.{}'.format(mode, 'complex_context')
 
-        src_seq, tgt_seq, tgt_context_seq
         with open(src_dir, 'r') as f1, open(tgt_dir, 'r') as f2 , open(tgt_context_dir, 'r') as f3:
             start = time.time()
             src_seq = f1.readlines()
