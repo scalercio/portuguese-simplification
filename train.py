@@ -48,13 +48,16 @@ if __name__ == '__main__':
     module = CCNetDataModule(batch_size, tokenizer, sent_length)
 
     # training loop
-    lambda_val = 1e-3
+    paraphrase = False
+    lambda_val = 1e-2
+    delta_val = 1e-4
     config = {
         'sent_length': sent_length,
         'batch_size': batch_size,
-        'lambda_factor': 1, # ver onde usa
+        'delta_val': delta_val, # ver onde usa
         'lambda_val': lambda_val,
-        'model_version': 'ptt5-base'
+        'model_version': 'ptt5-base',
+        'paraphrase': paraphrase
     }
     output_dir = 'paraphrase-and-llm'
     logger = WandbLogger(
@@ -65,12 +68,12 @@ if __name__ == '__main__':
         
 
 
-    model = TextSettrModel(config['lambda_val'], config['sent_length'], tokenizer)
+    model = TextSettrModel(config['lambda_val'], config['sent_length'], config['delta_val'], tokenizer)
     # checkpoint_callback = pl.callbacks.ModelCheckpoint(dirpath=root, filename='{epoch}')
-    checkpoint_callback = pl.callbacks.ModelCheckpoint(monitor="val_loss")
+    checkpoint_callback = pl.callbacks.ModelCheckpoint(monitor="val_loss", save_top_k = 5)
     #logger = TensorBoardLogger("logs", name="textual_simplification")
-    trainer = Trainer(max_epochs = 8, default_root_dir='./', val_check_interval=0.1, precision='bf16', logger=logger,
-                          devices = 1)
+    trainer = Trainer(max_epochs = 5, default_root_dir='./', val_check_interval=0.1, precision='bf16', logger=logger,
+                          devices = 1, callbacks=[checkpoint_callback])
         #trainer = Trainer(max_epochs=10, gpus=8, default_root_dir="", val_check_interval=0.25,
         #                  precision=32, logger=logger, plugins=[HFAIEnvironment()], callbacks=[cb])
 

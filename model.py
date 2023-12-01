@@ -415,7 +415,7 @@ class T5ForConditionalGenerationWithExtractor(T5PreTrainedModel):
 
 
 class TextSettrModel(LightningModule):
-    def __init__(self, lambda_val, sent_length, tokenizer):
+    def __init__(self, lambda_val, sent_length, delta_val, tokenizer):
         super().__init__()
         self.net = T5ForConditionalGenerationWithExtractor.from_pretrained(
             "unicamp-dl/ptt5-base-t5-vocab")
@@ -423,6 +423,7 @@ class TextSettrModel(LightningModule):
         self.lambda_val = lambda_val
         self.sent_length = sent_length
         self.tokenizer = tokenizer
+        self.delta_val = delta_val
 
     def training_step(self, batch):
         context_ids, input_ids = batch[0], batch[1]
@@ -438,19 +439,21 @@ class TextSettrModel(LightningModule):
 
         extractor_output_input = self.net.get_extractor_output(
             use_cache_context_ids=input_ids)
-        barlow_twins_loss_func = BarlowTwinsLoss(batch_size=64)
+        barlow_twins_loss_func = BarlowTwinsLoss(batch_size=64, lambda_coeff = self.delta_val)
         barlow_twins_loss = barlow_twins_loss_func(
             extractor_output_input, extractor_output)
+        self.log('train_bt_loss', barlow_twins_loss, on_epoch = True)
 
         output_loss = self.net(input_ids=noisy_input_ids, labels=input_ids,
                                use_cache_extractor_outputs=extractor_output).loss
+        self.log('train_reconstruction_loss', output_loss, on_epoch = True)
         
         if output_loss is not None:
             output_loss = output_loss + self.lambda_val * barlow_twins_loss
             self.log('train_loss', output_loss, on_epoch = True)
             return output_loss
         else:
-            self.log('train_loss', output_loss)
+            self.log('train_loss', 0)
             return None
         # return self.net(input_ids=noisy_input_ids, labels = input_ids, use_cache_extractor_outputs=extractor_output).loss + barlow_twins_loss
 
@@ -465,18 +468,20 @@ class TextSettrModel(LightningModule):
 
         extractor_output_input = self.net.get_extractor_output(
             use_cache_context_ids=input_ids)
-        barlow_twins_loss_func = BarlowTwinsLoss(batch_size=64)
+        barlow_twins_loss_func = BarlowTwinsLoss(batch_size=64, lambda_coeff = self.delta_val)
         barlow_twins_loss = barlow_twins_loss_func(
             extractor_output_input, extractor_output)
+        self.log('val_bt_loss', barlow_twins_loss)
 
         output_loss = self.net(input_ids=noisy_input_ids, labels=input_ids,
                                use_cache_extractor_outputs=extractor_output).loss
+        self.log('val_reconstruction_loss', output_loss)
 
         if output_loss is not None:
             self.log("val_loss", output_loss +
                      self.lambda_val * barlow_twins_loss)
         else:
-            self.log("val_loss", output_loss)
+            self.log("val_loss", 0)
 
     def configure_optimizers(self):
         return torch.optim.AdamW(self.net.parameters(), 1e-3)
