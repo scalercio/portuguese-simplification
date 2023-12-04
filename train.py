@@ -17,6 +17,7 @@ import os
 from data import CCNetDataModule
 from model import (T5ForConditionalGenerationWithExtractor,
                    TextSettrModel)
+from utils import get_evaluate_kwargs
 
 
 import warnings
@@ -51,12 +52,15 @@ if __name__ == '__main__':
     paraphrase = False
     lambda_val = 1e-2
     delta_val = 1e-4
+    lr = 3e-4
     config = {
         'sent_length': sent_length,
         'batch_size': batch_size,
         'delta_val': delta_val, # ver onde usa
         'lambda_val': lambda_val,
         'model_version': 'ptt5-base',
+        'lr': lr,
+        'evaluate_kwargs': get_evaluate_kwargs("pt"),
         'paraphrase': paraphrase
     }
     output_dir = 'paraphrase-and-llm'
@@ -68,7 +72,7 @@ if __name__ == '__main__':
         
 
 
-    model = TextSettrModel(config['lambda_val'], config['sent_length'], config['delta_val'], tokenizer)
+    model = TextSettrModel(config['lambda_val'], config['sent_length'], config['delta_val'], config['lr'], tokenizer)
     # checkpoint_callback = pl.callbacks.ModelCheckpoint(dirpath=root, filename='{epoch}')
     checkpoint_callback = pl.callbacks.ModelCheckpoint(monitor="val_loss", save_top_k = 5)
     #logger = TensorBoardLogger("logs", name="textual_simplification")

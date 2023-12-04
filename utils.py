@@ -1,5 +1,42 @@
 import numpy as np
 import torch
+from paths import get_data_filepath, MODELS_DIR, get_dataset_dir
+
+def get_evaluate_kwargs(language, phase='valid'):
+    return {
+        ('en', 'valid'): {'test_set': 'asset_valid'},
+        ('en', 'test'): {'test_set': 'asset_test'},
+        ('fr', 'valid'): {
+            'test_set': 'custom',
+            'orig_sents_path': get_data_filepath('alector', 'valid', 'complex'),
+            'refs_sents_paths': [get_data_filepath('alector', 'valid', 'simple')],
+        },
+        ('fr', 'test'): {
+            'test_set': 'custom',
+            'orig_sents_path': get_data_filepath('alector', 'test', 'complex'),
+            'refs_sents_paths': [get_data_filepath('alector', 'test', 'simple')],
+        },
+        ('es', 'valid'): {
+            'test_set': 'custom',
+            'orig_sents_path': get_data_filepath('simplext_corpus', 'valid', 'complex'),
+            'refs_sents_paths': [get_data_filepath('simplext_corpus', 'valid', 'simple')],
+        },
+        ('es', 'test'): {
+            'test_set': 'custom',
+            'orig_sents_path': get_data_filepath('simplext_corpus', 'test', 'complex'),
+            'refs_sents_paths': [get_data_filepath('simplext_corpus', 'test', 'simple')],
+        },
+        ('pt', 'valid'): {
+            'test_set': 'custom',
+            'orig_sents_path': get_data_filepath(TEST_DATASET, 'valid', 'complex'),
+            'refs_sents_paths': [get_data_filepath(TEST_DATASET, 'valid', 'simple')],
+        },
+        ('pt', 'test'): {
+            'test_set': 'custom',
+            'orig_sents_path': get_data_filepath(TEST_DATASET, 'test', 'complex'),
+            'refs_sents_paths': [get_data_filepath(TEST_DATASET, 'test', 'simple')],
+        },
+    }[(language, phase)]
 
 """get output"""
 

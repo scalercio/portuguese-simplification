@@ -415,7 +415,7 @@ class T5ForConditionalGenerationWithExtractor(T5PreTrainedModel):
 
 
 class TextSettrModel(LightningModule):
-    def __init__(self, lambda_val, sent_length, delta_val, tokenizer):
+    def __init__(self, lambda_val, sent_length, delta_val, lr, tokenizer):
         super().__init__()
         self.net = T5ForConditionalGenerationWithExtractor.from_pretrained(
             "unicamp-dl/ptt5-base-t5-vocab")
@@ -424,6 +424,7 @@ class TextSettrModel(LightningModule):
         self.sent_length = sent_length
         self.tokenizer = tokenizer
         self.delta_val = delta_val
+        self.lr = lr
 
     def training_step(self, batch):
         context_ids, input_ids = batch[0], batch[1]
@@ -482,6 +483,46 @@ class TextSettrModel(LightningModule):
                      self.lambda_val * barlow_twins_loss)
         else:
             self.log("val_loss", 0)
+            
+        self.evaluate_and_save(**kwargs)
 
     def configure_optimizers(self):
-        return torch.optim.AdamW(self.net.parameters(), 1e-3)
+        return torch.optim.AdamW(self.net.parameters(), self.lr)
+    
+    def evaluate_and_save(self, exp_dir, **kwargs):
+        #scores = fairseq_evaluate(exp_dir, **kwargs)
+        evaluate_kwargs = kwargs.get('evaluate_kwargs', {'test_set': 'custom'})
+        scores = self.evaluate_simplifier(simplifier, **evaluate_kwargs)
+        
+        print(f'scores={scores}')
+        report_path = exp_dir / 'easse_report.html'
+        shutil.move(get_easse_report_from_exp_dir(exp_dir, **kwargs), report_path)
+        print(f'report_path={report_path}')
+        predict_files = kwargs.get(
+            'predict_files',
+            [get_data_filepath(TEST_DATASET, 'valid', 'complex'), get_data_filepath(TEST_DATASET, 'test', 'complex')],
+        )
+        for source_path in predict_files:
+            pred_path = get_predictions(source_path, exp_dir, **kwargs)
+            shutil.copyfile(source_path, exp_dir / source_path.name)
+            new_pred_path = exp_dir / source_path.with_suffix('.pred').name
+            shutil.move(pred_path, new_pred_path)
+            print(f'source_path={source_path}')
+            print(f'pred_path={new_pred_path}')
+        return scores
+    
+    def evaluate_simplifier(simplifier, test_set, orig_sents_path=None, refs_sents_paths=None, quality_estimation=False):
+        orig_sents, _ = get_orig_and_refs_sents(
+            test_set, orig_sents_path=orig_sents_path, refs_sents_paths=refs_sents_paths
+        )
+        orig_sents_path = get_temp_filepath()
+        write_lines(orig_sents, orig_sents_path)
+        sys_sents_path = simplifier(orig_sents_path)
+        return evaluate_system_output(
+            test_set,
+            sys_sents_path=sys_sents_path,
+            orig_sents_path=orig_sents_path,
+            refs_sents_paths=refs_sents_paths,
+            metrics=['sari', 'bleu', 'fkgl'],
+            quality_estimation=quality_estimation,
+        )
