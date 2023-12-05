@@ -31,14 +31,16 @@ class CCNetDataModule(pl.LightningDataModule):
 
         train_src, train_tgt, train_tgt_context = self.read_insts('train')
         valid_src, valid_tgt, valid_tgt_context = self.read_insts('valid')
+        infer_src, infer_tgt, _ = self.read_insts('inference')
         print('[Info] {} instances from train set'.format(len(train_src)))
         print('[Info] {} instances from valid set'.format(len(valid_src)))
+        print('[Info] {} instances from inference set'.format(len(infer_src)))
         
         self.train = CCNetDataset(
             train_src, train_tgt, train_tgt_context, tokenizer, sent_length)
-        self.test = CCNetDataset(
-            valid_src, valid_tgt, valid_tgt_context, tokenizer, sent_length)
-        self.val = CCNetDataset(valid_src, valid_tgt, valid_tgt_context, tokenizer, sent_length)
+        self.val = CCNetDataset(
+            infer_src, infer_tgt, infer_src, tokenizer, sent_length)
+        self.test = CCNetDataset(valid_src, valid_tgt, valid_tgt_context, tokenizer, sent_length)
         self.batch_size = batch_size
 
     def read_insts(self, mode):
@@ -53,9 +55,15 @@ class CCNetDataModule(pl.LightningDataModule):
             tgt_seq: list of the lists of token ids for each tgrget sentence.
         """
 
-        src_dir = 'data/ccnet/{}.{}'.format(mode, 'simple')
-        tgt_dir = 'data/ccnet/{}.{}'.format(mode, 'complex')
-        tgt_context_dir = 'data/ccnet/{}.{}'.format(mode, 'complex_context')
+        if mode not in 'inference':            
+            src_dir = 'data/ccnet/{}.{}'.format(mode, 'simple')
+            tgt_dir = 'data/ccnet/{}.{}'.format(mode, 'complex')
+            tgt_context_dir = 'data/ccnet/{}.{}'.format(mode, 'complex_context')
+        else:
+            src_dir = 'data/porsimplessent/{}.{}'.format('valid', 'complex')
+            tgt_dir = 'data/porsimplessent/{}.{}'.format('valid', 'simple')
+            tgt_context_dir = 'data/porsimplessent/{}.{}'.format('valid', 'complex_context')
+            
 
         with open(src_dir, 'r') as f1, open(tgt_dir, 'r') as f2 , open(tgt_context_dir, 'r') as f3:
             start = time.time()

@@ -11,6 +11,10 @@ import numpy as np
 
 from utils import apply_noise
 from loss import BarlowTwinsLoss
+from paths import get_repo_dir
+from helpers import write_lines, get_temp_filepath
+from easse.cli import report, get_orig_and_refs_sents, evaluate_system_output
+import wandb
 
 __HEAD_MASK_WARNING_MSG = """
 The input argument `head_mask` was split into two arguments `head_mask` and `decoder_head_mask`. Currently,
@@ -415,7 +419,7 @@ class T5ForConditionalGenerationWithExtractor(T5PreTrainedModel):
 
 
 class TextSettrModel(LightningModule):
-    def __init__(self, lambda_val, sent_length, delta_val, lr, tokenizer):
+    def __init__(self, lambda_val, sent_length, delta_val, lr, evaluate_kwargs, tokenizer):
         super().__init__()
         self.net = T5ForConditionalGenerationWithExtractor.from_pretrained(
             "unicamp-dl/ptt5-base-t5-vocab")
@@ -425,7 +429,25 @@ class TextSettrModel(LightningModule):
         self.tokenizer = tokenizer
         self.delta_val = delta_val
         self.lr = lr
+        self.evaluate_kwargs = evaluate_kwargs
+        self.val_simplified_sentences = []
+        self.read_exemplars()
 
+    def read_exemplars(self):
+        with open(self.evaluate_kwargs['src_exemplars'], 'r') as f1, open(self.evaluate_kwargs['tgt_exemplars'], 'r') as f2:
+            src_seq = f1.readlines()
+            tgt_seq = f2.readlines()
+            self.src_ids = [self.tokenizer.encode(sentence, max_length=self.sent_length,
+                                                  truncation=True, padding="max_length",
+                                                  return_tensors="pt")[0] for sentence in src_seq]
+            self.src_ids = self.src_ids[:100]
+            self.src_ids = torch.stack(self.src_ids, 0)
+            self.tgt_ids = [self.tokenizer.encode(sentence, max_length=self.sent_length,
+                                                  truncation=True, padding="max_length",
+                                                  return_tensors="pt")[0] for sentence in tgt_seq]
+            self.tgt_ids = self.tgt_ids[:100]
+            self.tgt_ids = torch.stack(self.tgt_ids, 0)
+    
     def training_step(self, batch):
         context_ids, input_ids = batch[0], batch[1]
         # print('input ids size', input_ids.size())
@@ -458,71 +480,64 @@ class TextSettrModel(LightningModule):
             return None
         # return self.net(input_ids=noisy_input_ids, labels = input_ids, use_cache_extractor_outputs=extractor_output).loss + barlow_twins_loss
 
-    def validation_step(self, batch):
-        context_ids, input_ids = batch[0], batch[1]
-        noisy_input_ids = apply_noise(
-            input_ids, self.tokenizer, self.sent_length)
-        noisy_input_ids = self.net.generate(input_ids=noisy_input_ids, use_cache_extractor_outputs=0,
+    def validation_step(self, batch, batch_idx):
+        source_ids, _ = batch[0], batch[1]
+        style = self.net.get_extractor_output(
+            use_cache_context_ids=source_ids)
+        
+        #print(self.src_ids.size())
+        style_src = self.net.get_extractor_output(
+            use_cache_context_ids=self.src_ids.to(device='cuda'))
+        style_tgt = self.net.get_extractor_output(
+            use_cache_context_ids=self.tgt_ids.to(device='cuda'))
+        style_src = torch.mean(style_src, dim = 0)
+        style_tgt = torch.mean(style_tgt, dim = 0)
+        
+        style += (style_tgt - style_src) * self.evaluate_kwargs['beta']
+        outputs = self.net.generate(input_ids=source_ids, use_cache_extractor_outputs=style,
                                             do_sample=True, max_length=self.sent_length, min_length=self.sent_length)
-        extractor_output = self.net.get_extractor_output(
-            use_cache_context_ids=context_ids)
-
-        extractor_output_input = self.net.get_extractor_output(
-            use_cache_context_ids=input_ids)
-        barlow_twins_loss_func = BarlowTwinsLoss(batch_size=64, lambda_coeff = self.delta_val)
-        barlow_twins_loss = barlow_twins_loss_func(
-            extractor_output_input, extractor_output)
-        self.log('val_bt_loss', barlow_twins_loss)
-
-        output_loss = self.net(input_ids=noisy_input_ids, labels=input_ids,
-                               use_cache_extractor_outputs=extractor_output).loss
-        self.log('val_reconstruction_loss', output_loss)
-
-        if output_loss is not None:
-            self.log("val_loss", output_loss +
-                     self.lambda_val * barlow_twins_loss)
-        else:
-            self.log("val_loss", 0)
+        simplified_sentences = [self.tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
+        self.val_simplified_sentences.extend(simplified_sentences)
+    
+    def on_validation_epoch_end(self):
+        sys_sents_path = get_repo_dir() / str(wandb.run.project) / str(wandb.run) / f'{self.current_epoch}_{self.global_step}'
+        write_lines(self.val_simplified_sentences, sys_sents_path)
+        scores =  evaluate_system_output(
+            self.evaluate_kwargs['test_set'],
+            sys_sents_path=sys_sents_path,
+            orig_sents_path=self.evaluate_kwargs['orig_sents_path'],
+            refs_sents_paths=self.evaluate_kwargs['refs_sents_paths'],
+            metrics=['sari', 'bleu', 'fkgl'],
+            quality_estimation=False,
+        )
+        
+        self.log_dict(scores)
+        self.val_simplified_sentences.clear()
+        #noisy_input_ids = apply_noise(
+        #    input_ids, self.tokenizer, self.sent_length)
+        #noisy_input_ids = self.net.generate(input_ids=noisy_input_ids, use_cache_extractor_outputs=0,
+        #                                    do_sample=True, max_length=self.sent_length, min_length=self.sent_length)
+        #extractor_output = self.net.get_extractor_output(
+        #    use_cache_context_ids=context_ids)
+#
+        #extractor_output_input = self.net.get_extractor_output(
+        #    use_cache_context_ids=input_ids)
+        #barlow_twins_loss_func = BarlowTwinsLoss(batch_size=64, lambda_coeff = self.delta_val)
+        #barlow_twins_loss = barlow_twins_loss_func(
+        #    extractor_output_input, extractor_output)
+        #self.log('val_bt_loss', barlow_twins_loss)
+#
+        #output_loss = self.net(input_ids=noisy_input_ids, labels=input_ids,
+        #                       use_cache_extractor_outputs=extractor_output).loss
+        #self.log('val_reconstruction_loss', output_loss)
+#
+        #if output_loss is not None:
+        #    self.log("val_loss", output_loss +
+        #             self.lambda_val * barlow_twins_loss)
+        #else:
+        #    self.log("val_loss", 0)
             
-        self.evaluate_and_save(**kwargs)
+        #scores = self.evaluate_and_save(batch)
 
     def configure_optimizers(self):
         return torch.optim.AdamW(self.net.parameters(), self.lr)
-    
-    def evaluate_and_save(self, exp_dir, **kwargs):
-        #scores = fairseq_evaluate(exp_dir, **kwargs)
-        evaluate_kwargs = kwargs.get('evaluate_kwargs', {'test_set': 'custom'})
-        scores = self.evaluate_simplifier(simplifier, **evaluate_kwargs)
-        
-        print(f'scores={scores}')
-        report_path = exp_dir / 'easse_report.html'
-        shutil.move(get_easse_report_from_exp_dir(exp_dir, **kwargs), report_path)
-        print(f'report_path={report_path}')
-        predict_files = kwargs.get(
-            'predict_files',
-            [get_data_filepath(TEST_DATASET, 'valid', 'complex'), get_data_filepath(TEST_DATASET, 'test', 'complex')],
-        )
-        for source_path in predict_files:
-            pred_path = get_predictions(source_path, exp_dir, **kwargs)
-            shutil.copyfile(source_path, exp_dir / source_path.name)
-            new_pred_path = exp_dir / source_path.with_suffix('.pred').name
-            shutil.move(pred_path, new_pred_path)
-            print(f'source_path={source_path}')
-            print(f'pred_path={new_pred_path}')
-        return scores
-    
-    def evaluate_simplifier(simplifier, test_set, orig_sents_path=None, refs_sents_paths=None, quality_estimation=False):
-        orig_sents, _ = get_orig_and_refs_sents(
-            test_set, orig_sents_path=orig_sents_path, refs_sents_paths=refs_sents_paths
-        )
-        orig_sents_path = get_temp_filepath()
-        write_lines(orig_sents, orig_sents_path)
-        sys_sents_path = simplifier(orig_sents_path)
-        return evaluate_system_output(
-            test_set,
-            sys_sents_path=sys_sents_path,
-            orig_sents_path=orig_sents_path,
-            refs_sents_paths=refs_sents_paths,
-            metrics=['sari', 'bleu', 'fkgl'],
-            quality_estimation=quality_estimation,
-        )

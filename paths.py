@@ -8,12 +8,12 @@ from itertools import product
 from pathlib import Path
 import shutil
 
-from muss.utils.resources import download_and_extract
+#from muss.utils.resources import download_and_extract
 
 REPO_DIR = Path(__file__).resolve().parent
 EXP_DIR = REPO_DIR / 'experiments'
 RESOURCES_DIR = REPO_DIR / 'resources'
-DATASETS_DIR = RESOURCES_DIR / 'data'
+DATASETS_DIR = REPO_DIR / 'data'
 VARIOUS_DIR = RESOURCES_DIR / 'various'
 MODELS_DIR = RESOURCES_DIR / 'models'
 TOOLS_DIR = RESOURCES_DIR / 'tools'
@@ -33,6 +33,9 @@ PHASES = ['train', 'valid', 'test']
 
 def get_dataset_dir(dataset):
     return DATASETS_DIR / dataset
+
+def get_repo_dir():
+    return REPO_DIR
 
 
 def get_data_filepath(dataset, phase, language, i=None):
