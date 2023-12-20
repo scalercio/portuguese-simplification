@@ -35,10 +35,10 @@ if __name__ == '__main__':
     torch.manual_seed(rand_seed)
 
     # hyperparameters
-    batch_size = 32
-    sent_length = 32    
+    batch_size = 48
+    sent_length = 50    
 
-    tokenizer = T5TokenizerFast.from_pretrained("unicamp-dl/ptt5-base-t5-vocab")
+    tokenizer = T5TokenizerFast.from_pretrained("unicamp-dl/ptt5-base-portuguese-vocab")
 
     #model = T5ForConditionalGenerationWithExtractor.from_pretrained(
     #    "./pretrained_model/t5-base-with-extractor")
@@ -52,12 +52,14 @@ if __name__ == '__main__':
     paraphrase = False
     lambda_val = 1e-2
     delta_val = 1e-4
+    rec_val = 0.5
     lr = 3e-4
     config = {
         'sent_length': sent_length,
         'batch_size': batch_size,
         'delta_val': delta_val, # ver onde usa
         'lambda_val': lambda_val,
+        'rec_val': rec_val,
         'model_version': 'ptt5-base',
         'lr': lr,
         'evaluate_kwargs': get_evaluate_kwargs("pt"),
@@ -72,7 +74,7 @@ if __name__ == '__main__':
         
 
 
-    model = TextSettrModel(config['lambda_val'], config['sent_length'], config['delta_val'], config['lr'], config['evaluate_kwargs'], tokenizer)
+    model = TextSettrModel(config['lambda_val'], config['sent_length'], config['delta_val'], config['rec_val'], config['lr'], config['evaluate_kwargs'], tokenizer)
     # checkpoint_callback = pl.callbacks.ModelCheckpoint(dirpath=root, filename='{epoch}')
     checkpoint_callback = pl.callbacks.ModelCheckpoint(monitor="sari", save_top_k = 5, mode = 'max')
     #logger = TensorBoardLogger("logs", name="textual_simplification")

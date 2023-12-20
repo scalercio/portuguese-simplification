@@ -180,6 +180,8 @@ class T5ForConditionalGenerationWithExtractor(T5PreTrainedModel):
                 target_styles), 0) - (torch.mean(torch.vstack(original_styles), 0))) + input_style
 
         else:
+            #for i, vector in enumerate(use_cache_context_ids):
+            #    print(vector)
             if extractor_outputs is None:
                 extractor_outputs = self.extractor(
                     input_ids=use_cache_context_ids,
@@ -275,6 +277,8 @@ class T5ForConditionalGenerationWithExtractor(T5PreTrainedModel):
                     encoder_outputs) > 2 else None,
             )
 
+        #if torch.is_tensor(use_cache_extractor_outputs):
+        #    use_cache_extractor_outputs = torch.mean(use_cache_extractor_outputs, 1).unsqueeze(1)
         hidden_states = encoder_outputs[0] + use_cache_extractor_outputs
 
         if self.model_parallel:
@@ -331,7 +335,7 @@ class T5ForConditionalGenerationWithExtractor(T5PreTrainedModel):
         loss = None
         if labels is not None:
             # loss_extractor_fct = BarlowTwinsLoss(batch_size=64)
-            loss_output_fct = torch.nn.CrossEntropyLoss(ignore_index=-100)
+            loss_output_fct = torch.nn.CrossEntropyLoss(ignore_index=0)
             # loss_extractor = loss_extractor_fct()
             loss = loss_output_fct(
                 lm_logits.view(-1, lm_logits.size(-1)), labels.view(-1))
@@ -419,15 +423,18 @@ class T5ForConditionalGenerationWithExtractor(T5PreTrainedModel):
 
 
 class TextSettrModel(LightningModule):
-    def __init__(self, lambda_val, sent_length, delta_val, lr, evaluate_kwargs, tokenizer):
+    def __init__(self, lambda_val, sent_length, delta_val, rec_val, lr, evaluate_kwargs, tokenizer):
         super().__init__()
         self.net = T5ForConditionalGenerationWithExtractor.from_pretrained(
-            "unicamp-dl/ptt5-base-t5-vocab")
+            "unicamp-dl/ptt5-base-portuguese-vocab")
         self.net.extractor = copy.deepcopy(self.net.encoder)
+        #print(self.net.encoder.state_dict()['block.1.layer.0.SelfAttention.q.weight'])
+        #print(self.net.extractor.state_dict()['block.1.layer.0.SelfAttention.q.weight'])
         self.lambda_val = lambda_val
         self.sent_length = sent_length
         self.tokenizer = tokenizer
         self.delta_val = delta_val
+        self.rec_val = rec_val
         self.lr = lr
         self.evaluate_kwargs = evaluate_kwargs
         self.val_simplified_sentences = []
@@ -449,30 +456,38 @@ class TextSettrModel(LightningModule):
             self.tgt_ids = torch.stack(self.tgt_ids, 0)
     
     def training_step(self, batch):
-        context_ids, input_ids = batch[0], batch[1]
+        context_ids, input_ids, labels_ids = batch[0], batch[1], batch[2]
         # print('input ids size', input_ids.size())
         noisy_input_ids = apply_noise(
             input_ids, self.tokenizer, self.sent_length)
         if np.random.choice([False, True]):
             # Noisy back translation
             noisy_input_ids = self.net.generate(input_ids=noisy_input_ids, use_cache_extractor_outputs=0,
-                                                do_sample=True, max_length=self.sent_length, min_length=self.sent_length)
+                                                max_length=self.sent_length)
         extractor_output = self.net.get_extractor_output(
             use_cache_context_ids=context_ids)
 
         extractor_output_input = self.net.get_extractor_output(
             use_cache_context_ids=input_ids)
-        barlow_twins_loss_func = BarlowTwinsLoss(batch_size=64, lambda_coeff = self.delta_val)
-        barlow_twins_loss = barlow_twins_loss_func(
-            extractor_output_input, extractor_output)
-        self.log('train_bt_loss', barlow_twins_loss, on_epoch = True)
-
+        if self.lambda_val > 0:
+            barlow_twins_loss_func = BarlowTwinsLoss(batch_size=64, lambda_coeff = self.delta_val)
+            barlow_twins_loss = barlow_twins_loss_func(
+                extractor_output_input, extractor_output)
+            self.log('train_bt_loss', barlow_twins_loss, on_epoch = True)
+        else:
+            barlow_twins_loss = 0
+        #input_ids[input_ids == self.tokenizer.pad_token_id] = -100
+        extractor_output = torch.mean(extractor_output, 1).unsqueeze(1)
         output_loss = self.net(input_ids=noisy_input_ids, labels=input_ids,
                                use_cache_extractor_outputs=extractor_output).loss
         self.log('train_reconstruction_loss', output_loss, on_epoch = True)
         
+        para_loss = self.net(input_ids=input_ids, labels=labels_ids,
+                               use_cache_extractor_outputs=extractor_output).loss
+        self.log('train_para_loss', para_loss, on_epoch = True)
+        
         if output_loss is not None:
-            output_loss = output_loss + self.lambda_val * barlow_twins_loss
+            output_loss = self.rec_val * output_loss + para_loss + self.lambda_val * barlow_twins_loss
             self.log('train_loss', output_loss, on_epoch = True)
             return output_loss
         else:
@@ -490,12 +505,15 @@ class TextSettrModel(LightningModule):
             use_cache_context_ids=self.src_ids.to(device='cuda'))
         style_tgt = self.net.get_extractor_output(
             use_cache_context_ids=self.tgt_ids.to(device='cuda'))
-        style_src = torch.mean(style_src, dim = 0)
-        style_tgt = torch.mean(style_tgt, dim = 0)
+        style_src = torch.mean(style_src, dim = 0).unsqueeze(0)
+        style_tgt = torch.mean(style_tgt, dim = 0).unsqueeze(0)
+        style_src = torch.mean(style_src, dim = 1).unsqueeze(1)
+        style_tgt = torch.mean(style_tgt, dim = 1).unsqueeze(1)
         
         style += (style_tgt - style_src) * self.evaluate_kwargs['beta']
+        style = torch.mean(style, 1).unsqueeze(1)
         outputs = self.net.generate(input_ids=source_ids, use_cache_extractor_outputs=style,
-                                            do_sample=True, max_length=self.sent_length, min_length=self.sent_length)
+                                            max_length=self.sent_length)
         simplified_sentences = [self.tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
         self.val_simplified_sentences.extend(simplified_sentences)
     
