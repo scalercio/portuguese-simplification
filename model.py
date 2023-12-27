@@ -183,6 +183,11 @@ class T5ForConditionalGenerationWithExtractor(T5PreTrainedModel):
             #for i, vector in enumerate(use_cache_context_ids):
             #    print(vector)
             if extractor_outputs is None:
+                if attention_mask is None:
+                    batch_size, seq_length = use_cache_context_ids.size()
+                    attention_mask = torch.ones(batch_size, seq_length, device=use_cache_context_ids.device)
+                    attention_mask[use_cache_context_ids == 0] = 0
+                    
                 extractor_outputs = self.extractor(
                     input_ids=use_cache_context_ids,
                     attention_mask=attention_mask,
@@ -469,6 +474,9 @@ class TextSettrModel(LightningModule):
 
         extractor_output_input = self.net.get_extractor_output(
             use_cache_context_ids=input_ids)
+        
+        #extractor_output = torch.mean(extractor_output, 1).unsqueeze(1)
+        #extractor_output_input = torch.mean(extractor_output_input, 1).unsqueeze(1)
         if self.lambda_val > 0:
             barlow_twins_loss_func = BarlowTwinsLoss(batch_size=64, lambda_coeff = self.delta_val)
             barlow_twins_loss = barlow_twins_loss_func(
@@ -478,9 +486,12 @@ class TextSettrModel(LightningModule):
             barlow_twins_loss = 0
         #input_ids[input_ids == self.tokenizer.pad_token_id] = -100
         extractor_output = torch.mean(extractor_output, 1).unsqueeze(1)
-        output_loss = self.net(input_ids=noisy_input_ids, labels=input_ids,
-                               use_cache_extractor_outputs=extractor_output).loss
-        self.log('train_reconstruction_loss', output_loss, on_epoch = True)
+        if self.rec_val > 0:            
+            output_loss = self.net(input_ids=noisy_input_ids, labels=input_ids,
+                                   use_cache_extractor_outputs=extractor_output).loss
+            self.log('train_reconstruction_loss', output_loss, on_epoch = True)
+        else:
+            output_loss = 0
         
         para_loss = self.net(input_ids=input_ids, labels=labels_ids,
                                use_cache_extractor_outputs=extractor_output).loss
@@ -518,7 +529,7 @@ class TextSettrModel(LightningModule):
         self.val_simplified_sentences.extend(simplified_sentences)
     
     def on_validation_epoch_end(self):
-        sys_sents_path = get_repo_dir() / str(wandb.run.project) / str(wandb.run) / f'{self.current_epoch}_{self.global_step}'
+        sys_sents_path = get_repo_dir() / str(wandb.run.project) / str(wandb.run.name) / f'{self.current_epoch}_{self.global_step}'
         write_lines(self.val_simplified_sentences, sys_sents_path)
         scores =  evaluate_system_output(
             self.evaluate_kwargs['test_set'],
