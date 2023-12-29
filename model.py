@@ -428,15 +428,15 @@ class T5ForConditionalGenerationWithExtractor(T5PreTrainedModel):
 
 
 class TextSettrModel(LightningModule):
-    def __init__(self, lambda_val, sent_length, delta_val, rec_val, lr, evaluate_kwargs, tokenizer):
+    def __init__(self, sent_length, batch_size, delta_val, lambda_val, rec_val, lr, evaluate_kwargs, model_version, load_ckpt, tokenizer):
         super().__init__()
-        self.net = T5ForConditionalGenerationWithExtractor.from_pretrained(
-            "unicamp-dl/ptt5-base-portuguese-vocab")
+        self.net = T5ForConditionalGenerationWithExtractor.from_pretrained(model_version)
         self.net.extractor = copy.deepcopy(self.net.encoder)
         #print(self.net.encoder.state_dict()['block.1.layer.0.SelfAttention.q.weight'])
         #print(self.net.extractor.state_dict()['block.1.layer.0.SelfAttention.q.weight'])
         self.lambda_val = lambda_val
         self.sent_length = sent_length
+        self.batch_size = batch_size
         self.tokenizer = tokenizer
         self.delta_val = delta_val
         self.rec_val = rec_val
