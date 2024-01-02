@@ -9,9 +9,9 @@ import torch
 import torch.nn as nn
 import numpy as np
 
-from utils import apply_noise
-from loss import BarlowTwinsLoss
-from paths import get_repo_dir
+from source.utils import apply_noise
+from source.loss import BarlowTwinsLoss
+from source.paths import get_repo_dir
 from source.helpers import write_lines, get_temp_filepath
 from easse.cli import report, get_orig_and_refs_sents, evaluate_system_output
 import wandb

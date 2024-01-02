@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from paths import get_data_filepath, MODELS_DIR, get_dataset_dir
+from source.paths import get_data_filepath, MODELS_DIR, get_dataset_dir
 TEST_DATASET = 'porsimplessent'
 
 def get_evaluate_kwargs(language, phase='valid'):

@@ -10,7 +10,7 @@ import shutil
 
 #from muss.utils.resources import download_and_extract
 
-REPO_DIR = Path(__file__).resolve().parent
+REPO_DIR = Path(__file__).resolve().parent.parent
 EXP_DIR = REPO_DIR / 'experiments'
 RESOURCES_DIR = REPO_DIR / 'resources'
 DATASETS_DIR = REPO_DIR / 'data'
