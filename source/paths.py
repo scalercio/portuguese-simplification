@@ -8,7 +8,7 @@ from itertools import product
 from pathlib import Path
 import shutil
 
-#from muss.utils.resources import download_and_extract
+from source.resources import download_and_extract
 
 REPO_DIR = Path(__file__).resolve().parent.parent
 EXP_DIR = REPO_DIR / 'experiments'
@@ -17,11 +17,12 @@ DATASETS_DIR = REPO_DIR / 'data'
 VARIOUS_DIR = RESOURCES_DIR / 'various'
 MODELS_DIR = RESOURCES_DIR / 'models'
 TOOLS_DIR = RESOURCES_DIR / 'tools'
+DUMPS_DIR = RESOURCES_DIR / "DUMPS"
+PROCESSED_DATA_DIR = RESOURCES_DIR / "processed_data"
 SUBMITIT_LOGS_DIR = EXP_DIR / 'submitit_logs/'
 SUBMITIT_JOB_DIR_FORMAT = SUBMITIT_LOGS_DIR / '%j'
-TENSORBOARD_LOGS_DIR = EXP_DIR / 'tensorboard_logs'
 # TODO: Move this to setup or add the folders to the git repo
-for dir_path in [DATASETS_DIR, VARIOUS_DIR, MODELS_DIR, TOOLS_DIR, TENSORBOARD_LOGS_DIR]:
+for dir_path in [DATASETS_DIR, VARIOUS_DIR, MODELS_DIR, TOOLS_DIR]:
     dir_path.mkdir(exist_ok=True, parents=True)
 FASTTEXT_EMBEDDINGS_DIR = Path(VARIOUS_DIR) / 'fasttext-vectors/'
 LASER_DIR = TOOLS_DIR / 'LASER'

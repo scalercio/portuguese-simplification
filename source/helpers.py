@@ -26,6 +26,20 @@ from types import MethodType
 import cachetools
 from imohash import hashfile
 import numpy as np
+import pickle
+from sacremoses import MosesDetokenizer, MosesTokenizer
+
+
+@lru_cache(maxsize=1)
+def get_tokenizer():
+    return MosesTokenizer(lang='pt')
+
+@lru_cache(maxsize=1)
+def get_detokenizer():
+    return MosesDetokenizer(lang='pt')
+
+def tokenize(sentence):
+    return get_tokenizer().tokenize(sentence)
 
 
 def run_command(cmd, mute=False):
@@ -163,6 +177,59 @@ def count_lines(filepath):
         n_lines += 1
     return n_lines
 
+def yield_sentence_pair(filepath1, filepath2):
+    with Path(filepath1).open('r') as f1, Path(filepath2).open('r') as f2:
+        for line1, line2 in zip(f1, f2):
+            yield line1.rstrip(), line2.rstrip()
+
+
+def count_line(filepath):
+    filepath = Path(filepath)
+    line_count = 0
+    with filepath.open("r") as f:
+        for line in f:
+            line_count += 1
+    return line_count
+
+
+def load_dump(filepath):
+    return pickle.load(open(filepath, 'rb'))
+
+
+def dump(obj, filepath):
+    pickle.dump(obj, open(filepath, 'wb'))
+
+
+def print_execution_time(func):
+    @wraps(func)  # preserve name and doc of the function
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        print(f"Execution time({func.__name__}):{time.time() - start}")
+        return result
+
+    return wrapper
+
+
+def generate_hash(data):
+    h = hashlib.new('md5')
+    h.update(str(data).encode())
+    return h.hexdigest()
+
+def save_preprocessor(preprocessor, file_path):
+    DUMPS_DIR = file_path
+    DUMPS_DIR.mkdir(parents=True, exist_ok=True)
+    PREPROCESSOR_DUMP_FILE = DUMPS_DIR / 'preprocessor.pickle'
+    dump(preprocessor, PREPROCESSOR_DUMP_FILE)
+
+
+def load_preprocessor(file_path):
+    DUMPS_DIR = file_path
+    PREPROCESSOR_DUMP_FILE = DUMPS_DIR / 'preprocessor.pickle'
+    if PREPROCESSOR_DUMP_FILE.exists():
+        return load_dump(PREPROCESSOR_DUMP_FILE)
+    else:
+        return None
 
 @contextmanager
 def open_with_lock(filepath, mode):
