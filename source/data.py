@@ -3,6 +3,31 @@ import ast
 import pytorch_lightning as pl
 import time
 
+class TrainCCNetDataset(Dataset):
+    def __init__(self, src_inst, tgt_inst, tgt_context_inst, tokenizer, sent_length):
+        self.src_inst = src_inst
+        self.tgt_inst = tgt_inst
+        self.tgt_context_inst = tgt_context_inst
+        self.tokenizer = tokenizer
+        self.sent_length = sent_length
+
+    def __len__(self):
+        return len(self.src_inst)
+
+    def to_token(self, sentence):
+        tokenized = self.tokenizer(
+            [sentence],
+            truncation=True,
+            max_length=self.sent_length,
+            padding='max_length',
+            return_tensors="pt"
+        )
+        ids = tokenized["input_ids"].squeeze()
+        mask = tokenized["attention_mask"].squeeze()
+        return (ids, mask)
+
+    def __getitem__(self, index):
+        return self.to_token(self.tgt_context_inst[index]) + self.to_token(self.tgt_inst[index]) + self.to_token(self.src_inst[index])
 
 class CCNetDataset(Dataset):
     def __init__(self, src_inst, tgt_inst, tgt_context_inst, tokenizer, sent_length):
@@ -36,7 +61,7 @@ class CCNetDataModule(pl.LightningDataModule):
         print('[Info] {} instances from valid set'.format(len(valid_src)))
         print('[Info] {} instances from inference set'.format(len(infer_src)))
         
-        self.train = CCNetDataset(
+        self.train = TrainCCNetDataset(
             train_src, train_tgt, train_tgt_context, tokenizer, sent_length)
         self.val = CCNetDataset(
             infer_src, infer_tgt, infer_src, tokenizer, sent_length)
@@ -58,10 +83,12 @@ class CCNetDataModule(pl.LightningDataModule):
         if mode not in 'inference':            
             src_dir = 'data/ccnet/{}.{}'.format(mode, 'simple')
             tgt_dir = 'data/ccnet/{}.{}'.format(mode, 'complex')
+            #tgt_dir = 'resources/processed_data/b6e484f0eec4c8c7bccb24a5d0cbe432/ccnet/{}.{}'.format(mode, 'complex')
             tgt_context_dir = 'data/ccnet/{}.{}'.format(mode, 'complex_context')
         else:
             src_dir = 'data/porsimplessent/{}.{}'.format('valid', 'complex')
             tgt_dir = 'data/porsimplessent/{}.{}'.format('valid', 'simple')
+            #tgt_dir = 'data/porsimplessent/{}.{}'.format('valid', 'complex_predicted')
             tgt_context_dir = 'data/porsimplessent/{}.{}'.format('valid', 'complex_context')
             
 

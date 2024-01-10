@@ -10,13 +10,13 @@ warnings.filterwarnings("ignore")
 
 if __name__ == '__main__':
     # hyperparameters
-    batch_size = 8
-    sent_length = 50
+    batch_size = 80
+    sent_length = 85
     lambda_val = 0
     delta_val = 1e-4
     rec_val = 0
-    lr = 1e-3
-    model_version = "unicamp-dl/ptt5-large-portuguese-vocab"
+    lr = 1e-4
+    model_version = "unicamp-dl/ptt5-base-portuguese-vocab"
     dataset = 'ccnet'
     config = {
         'sent_length': sent_length,
@@ -30,7 +30,7 @@ if __name__ == '__main__':
         'load_ckpt': None#'simplification-pt/4tnl668c/checkpoints/epoch=9-step=90187.ckpt',
     }
     features_kwargs = {
-    # 'WordRatioFeature': {'target_ratio': 0.8},
+    'WordRatioFeature': {'target_ratio': 0.8},
     'CharRatioFeature': {'target_ratio': 0.8},
     'LevenshteinRatioFeature': {'target_ratio': 0.8},
     'WordRankRatioFeature': {'target_ratio': 0.8},

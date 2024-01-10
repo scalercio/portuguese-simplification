@@ -461,19 +461,19 @@ class TextSettrModel(LightningModule):
             self.tgt_ids = torch.stack(self.tgt_ids, 0)
     
     def training_step(self, batch):
-        context_ids, input_ids, labels_ids = batch[0], batch[1], batch[2]
+        context_ids, labels_ids, decoder_attention_mask, input_ids, attention_mask = batch[0], batch[2], batch[3], batch[4], batch[5]
         # print('input ids size', input_ids.size())
-        noisy_input_ids = apply_noise(
-            input_ids, self.tokenizer, self.sent_length)
-        if np.random.choice([False, True]):
-            # Noisy back translation
-            noisy_input_ids = self.net.generate(input_ids=noisy_input_ids, use_cache_extractor_outputs=0,
-                                                max_length=self.sent_length)
+        #noisy_input_ids = apply_noise(
+        #    input_ids, self.tokenizer, self.sent_length)
+        #if np.random.choice([False, True]):
+        #    # Noisy back translation
+        #    noisy_input_ids = self.net.generate(input_ids=noisy_input_ids, use_cache_extractor_outputs=0,
+        #                                        max_length=self.sent_length)
         extractor_output = self.net.get_extractor_output(
             use_cache_context_ids=context_ids)
 
-        extractor_output_input = self.net.get_extractor_output(
-            use_cache_context_ids=input_ids)
+        #extractor_output_input = self.net.get_extractor_output(
+        #    use_cache_context_ids=input_ids)
         
         #extractor_output = torch.mean(extractor_output, 1).unsqueeze(1)
         #extractor_output_input = torch.mean(extractor_output_input, 1).unsqueeze(1)
@@ -494,6 +494,7 @@ class TextSettrModel(LightningModule):
             output_loss = 0
         
         para_loss = self.net(input_ids=input_ids, labels=labels_ids,
+                             attention_mask=attention_mask, decoder_attention_mask=decoder_attention_mask,
                                use_cache_extractor_outputs=extractor_output).loss
         self.log('train_para_loss', para_loss, on_epoch = True)
         
@@ -508,6 +509,7 @@ class TextSettrModel(LightningModule):
 
     def validation_step(self, batch, batch_idx):
         source_ids, _ = batch[0], batch[1]
+        #source_ids, predicted_ids = batch[0], batch[1]
         style = self.net.get_extractor_output(
             use_cache_context_ids=source_ids)
         
