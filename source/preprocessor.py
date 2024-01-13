@@ -29,9 +29,12 @@ from source.helpers import tokenize, yield_lines, load_dump, dump, write_lines, 
 stopwords = set(stopwords.words('portuguese'))
 
 
-def round(val):
-    return '%.2f' % val
+#def round(val):
+#    return '%.2f' % val
 
+def bucketize(value):
+    '''Round value to bucket_size to reduce the number of different values'''
+    return round(round(value / 0.05) * 0.05, 10)
 
 def safe_division(a, b):
     return a / b if b else 0
@@ -192,7 +195,7 @@ class WordRatioFeature(RatioFeature):
         super().__init__(self.get_word_length_ratio, *args, **kwargs)
 
     def get_word_length_ratio(self, complex_sentence, simple_sentence):
-        return round(safe_division(len(tokenize(simple_sentence)), len(tokenize(complex_sentence))))
+        return bucketize(safe_division(len(tokenize(simple_sentence)), len(tokenize(complex_sentence))))
 
 
 class CharRatioFeature(RatioFeature):
@@ -200,7 +203,7 @@ class CharRatioFeature(RatioFeature):
         super().__init__(self.get_char_length_ratio, *args, **kwargs)
 
     def get_char_length_ratio(self, complex_sentence, simple_sentence):
-        return round(safe_division(len(simple_sentence), len(complex_sentence)))
+        return bucketize(safe_division(len(simple_sentence), len(complex_sentence)))
 
 
 class LevenshteinRatioFeature(RatioFeature):
@@ -208,7 +211,7 @@ class LevenshteinRatioFeature(RatioFeature):
         super().__init__(self.get_levenshtein_ratio, *args, **kwargs)
 
     def get_levenshtein_ratio(self, complex_sentence, simple_sentence):
-        return round(Levenshtein.ratio(complex_sentence, simple_sentence))
+        return bucketize(Levenshtein.ratio(complex_sentence, simple_sentence))
 
 
 class WordRankRatioFeature(RatioFeature):
@@ -216,7 +219,7 @@ class WordRankRatioFeature(RatioFeature):
         super().__init__(self.get_word_rank_ratio, *args, **kwargs)
 
     def get_word_rank_ratio(self, complex_sentence, simple_sentence):
-        return round(min(safe_division(get_lexical_complexity_score(simple_sentence, language='pt'),
+        return bucketize(min(safe_division(get_lexical_complexity_score(simple_sentence, language='pt'),
                                        get_lexical_complexity_score(complex_sentence, language='pt')), 2))
 
 #    def get_lexical_complexity_score(self, sentence):
@@ -237,7 +240,7 @@ class DependencyTreeDepthRatioFeature(RatioFeature):
         super().__init__(self.get_dependency_tree_depth_ratio, *args, **kwargs)
 
     def get_dependency_tree_depth_ratio(self, complex_sentence, simple_sentence):
-        return round(
+        return bucketize(
             safe_division(get_dependency_tree_depth(simple_sentence, language='pt'),
                           get_dependency_tree_depth(complex_sentence, language='pt')))
 
@@ -294,14 +297,14 @@ class Preprocessor:
             for feature in self.features:
                 # startTime = timeit.default_timer()
                 # print(feature)
-                processed_complex, _ = feature.encode_sentence_pair(complex_sentence, simple_sentence)
+                processed_complex, _ = feature.encode_sentence_pair(simple_sentence, complex_sentence)
                 line += processed_complex + ' '
                 # print(feature, timeit.default_timer() - startTime)
-            line += ' ' + complex_sentence
+            line += ' ' + simple_sentence
             return line.rstrip()
 
         else:
-            return complex_sentence
+            return simple_sentence
 
     def decode_sentence(self, encoded_sentence):
         for feature in self.features:
@@ -385,8 +388,8 @@ class Preprocessor:
             print(f'Prepocessing files: {complex_filepath.name} {simple_filepath.name}')
             processed_complex_sentences = self.encode_file_pair(complex_filepath, simple_filepath)
 
-            write_lines(processed_complex_sentences, complex_output_filepath)
-            shutil.copy(simple_filepath, simple_output_filepath)
+            write_lines(processed_complex_sentences, simple_output_filepath)
+            shutil.copy(complex_filepath, complex_output_filepath)
 
         print(f'Preprocessing dataset "{dataset}" is finished.')
         return self.preprocessed_data_dir
