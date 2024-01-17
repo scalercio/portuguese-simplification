@@ -473,7 +473,7 @@ class TextSettrModel(LightningModule):
             use_cache_context_ids=context_ids)
 
         #extractor_output_input = self.net.get_extractor_output(
-        #    use_cache_context_ids=input_ids)
+        #    use_cache_context_ids=labels_ids)
         
         #extractor_output = torch.mean(extractor_output, 1).unsqueeze(1)
         #extractor_output_input = torch.mean(extractor_output_input, 1).unsqueeze(1)
@@ -508,8 +508,8 @@ class TextSettrModel(LightningModule):
         # return self.net(input_ids=noisy_input_ids, labels = input_ids, use_cache_extractor_outputs=extractor_output).loss + barlow_twins_loss
 
     def validation_step(self, batch, batch_idx):
-        source_ids, _ = batch[0], batch[1]
-        #source_ids, predicted_ids = batch[0], batch[1]
+        #source_ids, _ = batch[0], batch[1]
+        source_ids,  attention_masks = batch[0], batch[1]
         style = self.net.get_extractor_output(
             use_cache_context_ids=source_ids)
         
@@ -526,7 +526,8 @@ class TextSettrModel(LightningModule):
         style += (style_tgt - style_src) * self.evaluate_kwargs['beta']
         style = torch.mean(style, 1).unsqueeze(1)
         outputs = self.net.generate(input_ids=source_ids, use_cache_extractor_outputs=style,
-                                            max_length=self.sent_length)
+                                    #do_sample=False, num_beams = 8,
+                                    max_length=self.sent_length, attention_mask=attention_masks)
         simplified_sentences = [self.tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
         self.val_simplified_sentences.extend(simplified_sentences)
     

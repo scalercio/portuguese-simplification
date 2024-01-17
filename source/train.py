@@ -42,8 +42,8 @@ def run_training(config, features_kwargs, dataset='ccnet'):
     # checkpoint_callback = pl.callbacks.ModelCheckpoint(dirpath=root, filename='{epoch}')
     checkpoint_callback = pl.callbacks.ModelCheckpoint(monitor="sari", save_top_k = 2, mode = 'max')
     #logger = TensorBoardLogger("logs", name="textual_simplification")
-    trainer = Trainer(max_epochs = 15, default_root_dir='./', val_check_interval=0.1, precision='bf16', logger=logger,
-                          devices = 1, callbacks=[checkpoint_callback], num_sanity_val_steps=0, gradient_clip_val=5)
+    trainer = Trainer(max_epochs = 10, default_root_dir='./', val_check_interval=0.1, precision='bf16', logger=logger,
+                          devices = 1, callbacks=[checkpoint_callback], num_sanity_val_steps=0, gradient_clip_val=5, accumulate_grad_batches=8)
         #trainer = Trainer(max_epochs=10, gpus=8, default_root_dir="", val_check_interval=0.25,
         #                  precision=32, logger=logger, plugins=[HFAIEnvironment()], callbacks=[cb])
 

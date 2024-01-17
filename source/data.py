@@ -41,12 +41,23 @@ class CCNetDataset(Dataset):
         return len(self.src_inst)
 
     def to_token(self, sentence):
-        return self.tokenizer.encode(sentence, max_length=self.sent_length,
-                                     truncation=True, padding="max_length",
-                                     return_tensors="pt")[0]
+        tokenized = self.tokenizer(
+            [sentence],
+            truncation=True,
+            max_length=self.sent_length,
+            padding='max_length',
+            return_tensors="pt"
+        )
+        ids = tokenized["input_ids"].squeeze()
+        mask = tokenized["attention_mask"].squeeze()
+        return (ids, mask)
+    #def to_token(self, sentence):
+    #    return self.tokenizer.encode(sentence, max_length=self.sent_length,
+    #                                 truncation=True, padding="max_length",
+    #                                 return_tensors="pt")[0]
 
     def __getitem__(self, index):
-        return self.to_token(self.tgt_context_inst[index]), self.to_token(self.tgt_inst[index]), self.to_token(self.src_inst[index])
+        return self.to_token(self.tgt_context_inst[index]) + self.to_token(self.tgt_inst[index])
 
 
 class CCNetDataModule(pl.LightningDataModule):
@@ -82,13 +93,14 @@ class CCNetDataModule(pl.LightningDataModule):
 
         if mode not in 'inference':            
             src_dir = 'data/ccnet/{}.{}'.format(mode, 'simple')
+            #src_dir = 'resources/processed_data/b6e484f0eec4c8c7bccb24a5d0cbe432/ccnet/{}.{}'.format(mode, 'simple')
             tgt_dir = 'data/ccnet/{}.{}'.format(mode, 'complex')
             #tgt_dir = 'resources/processed_data/b6e484f0eec4c8c7bccb24a5d0cbe432/ccnet/{}.{}'.format(mode, 'complex')
             tgt_context_dir = 'data/ccnet/{}.{}'.format(mode, 'complex_context')
         else:
             src_dir = 'data/porsimplessent/{}.{}'.format('valid', 'complex')
             tgt_dir = 'data/porsimplessent/{}.{}'.format('valid', 'simple')
-            #tgt_dir = 'data/porsimplessent/{}.{}'.format('valid', 'complex_predicted')
+            #tgt_dir = 'data/porsimplessent/{}.{}'.format('valid', 'complex_predicted_bucketized')
             tgt_context_dir = 'data/porsimplessent/{}.{}'.format('valid', 'complex_context')
             
 

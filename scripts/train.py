@@ -10,13 +10,13 @@ warnings.filterwarnings("ignore")
 
 if __name__ == '__main__':
     # hyperparameters
-    batch_size = 80
+    batch_size = 8
     sent_length = 85
     lambda_val = 0
     delta_val = 1e-4
     rec_val = 0
     lr = 1e-4
-    model_version = "unicamp-dl/ptt5-base-portuguese-vocab"
+    model_version = "unicamp-dl/ptt5-large-portuguese-vocab"
     dataset = 'ccnet'
     config = {
         'sent_length': sent_length,
