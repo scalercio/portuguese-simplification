@@ -16,6 +16,11 @@ from source.paths import get_repo_dir
 from source.helpers import write_lines, get_temp_filepath
 from easse.cli import report, get_orig_and_refs_sents, evaluate_system_output
 import wandb
+from source.feature_extraction import (
+    get_lexical_complexity_score,
+    get_dependency_tree_depth,
+)
+from source.helpers import tokenize
 
 __HEAD_MASK_WARNING_MSG = """
 The input argument `head_mask` was split into two arguments `head_mask` and `decoder_head_mask`. Currently,
@@ -24,7 +29,34 @@ If you do not want to use any `decoder_head_mask` now, please set `decoder_head_
 num_heads)`.
 """
 
+#def Linear(in_features, out_features, bias=True, uniform=True):
+#    m = nn.Linear(in_features, out_features, bias)
+#    if uniform:
+#        nn.init.xavier_uniform_(m.weight)
+#    else:
+#        nn.init.xavier_normal_(m.weight)
+#    if bias:
+#        nn.init.constant_(m.bias, 0.)
+#    return m
 
+def LayerNorm(embedding_dim, eps=1e-6):
+    m = nn.LayerNorm(embedding_dim, eps)
+    return m
+
+class FeaturesExtractorFeedForward(nn.Module):
+    def __init__(self, d_model):
+        super(FeaturesExtractorFeedForward, self).__init__()
+        self.mlp = nn.Sequential(
+            LayerNorm(4),
+            nn.Linear(4, d_model),
+            nn.ReLU(),
+            nn.Linear(d_model, d_model),
+            LayerNorm(d_model)
+        )
+        
+    def forward(self, x):
+        return self.mlp(x)
+    
 class MT5ForConditionalGenerationWithExtractor(MT5PreTrainedModel):
     _keys_to_ignore_on_load_missing = [
         r"encoder\.embed_tokens\.weight",
@@ -454,6 +486,7 @@ class T5ForConditionalGenerationWithExtractor(T5PreTrainedModel):
         extractor_config.use_cache = False
         extractor_config.is_encoder_decoder = False
         self.extractor = T5Stack(extractor_config, self.shared)
+        self.feature_extractor = FeaturesExtractorFeedForward(config.d_model)
 
         decoder_config = copy.deepcopy(config)
         decoder_config.is_decoder = True
@@ -469,6 +502,11 @@ class T5ForConditionalGenerationWithExtractor(T5PreTrainedModel):
         self.model_parallel = False
         self.device_map = None
 
+    def _init_weights(self, m):
+        if isinstance(m, nn.Linear) and m.bias is not None:
+            nn.init.xavier_uniform_(m.weight)
+            m.bias.data.fill_(0.)
+    
     def parallelize(self, device_map=None):
         self.device_map = (
             get_device_map(len(self.encoder.block),
@@ -865,9 +903,16 @@ class TextSettrModel(LightningModule):
                                                   return_tensors="pt")[0] for sentence in tgt_seq]
             self.tgt_ids = self.tgt_ids[:100]
             self.tgt_ids = torch.stack(self.tgt_ids, 0)
+        
+        self.src_ids_features = [self.extract_features(sentence) for sentence in src_seq]
+        self.src_ids_features = self.src_ids_features[:100]
+        self.src_ids_features = torch.stack(self.src_ids_features, 0)
+        self.tgt_ids_features = [self.extract_features(sentence) for sentence in tgt_seq]
+        self.tgt_ids_features = self.tgt_ids_features[:100]
+        self.tgt_ids_features = torch.stack(self.tgt_ids_features, 0)
     
     def training_step(self, batch):
-        context_ids, labels_ids, decoder_attention_mask, input_ids, attention_mask = batch[0], batch[2], batch[3], batch[4], batch[5]
+        context_ids, labels_ids, decoder_attention_mask, input_ids, attention_mask, features = batch[0], batch[2], batch[3], batch[4], batch[5], batch[6]
         # print('input ids size', input_ids.size())
         #noisy_input_ids = apply_noise(
         #    input_ids, self.tokenizer, self.sent_length)
@@ -878,6 +923,7 @@ class TextSettrModel(LightningModule):
         extractor_output = self.net.get_extractor_output(
             use_cache_context_ids=context_ids)
 
+        feature_extractor_output = self.net.feature_extractor(features)
         #extractor_output_input = self.net.get_extractor_output(
         #    use_cache_context_ids=labels_ids)
         
@@ -901,7 +947,7 @@ class TextSettrModel(LightningModule):
         
         para_loss = self.net(input_ids=input_ids, labels=labels_ids,
                              attention_mask=attention_mask, decoder_attention_mask=decoder_attention_mask,
-                               use_cache_extractor_outputs=extractor_output).loss
+                               use_cache_extractor_outputs=extractor_output+feature_extractor_output.unsqueeze(1)).loss
         self.log('train_para_loss', para_loss, on_epoch = True)
         
         if output_loss is not None:
@@ -915,11 +961,13 @@ class TextSettrModel(LightningModule):
 
     def validation_step(self, batch, batch_idx):
         #source_ids, _ = batch[0], batch[1]
-        source_ids,  attention_masks = batch[0], batch[1]
+        source_ids,  attention_masks, features = batch[0], batch[1], batch[4]
         style = self.net.get_extractor_output(
             use_cache_context_ids=source_ids)
+        feature_extractor_output = self.net.feature_extractor(features)
+        feature_extractor_output = feature_extractor_output.unsqueeze(1)
+        style += feature_extractor_output
         
-        #print(self.src_ids.size())
         style_src = self.net.get_extractor_output(
             use_cache_context_ids=self.src_ids.to(device='cuda'))
         style_tgt = self.net.get_extractor_output(
@@ -928,8 +976,15 @@ class TextSettrModel(LightningModule):
         style_tgt = torch.mean(style_tgt, dim = 0).unsqueeze(0)
         style_src = torch.mean(style_src, dim = 1).unsqueeze(1)
         style_tgt = torch.mean(style_tgt, dim = 1).unsqueeze(1)
+        #print(style_src.size())
         
-        style += (style_tgt - style_src) * self.evaluate_kwargs['beta']
+        style_src_features = self.net.feature_extractor(self.src_ids_features.to(device='cuda'))
+        style_tgt_features = self.net.feature_extractor(self.tgt_ids_features.to(device='cuda'))
+        style_src_features = torch.mean(style_src_features, dim = 0).unsqueeze(0).unsqueeze(1)
+        style_tgt_features = torch.mean(style_tgt_features, dim = 0).unsqueeze(0).unsqueeze(1)
+        #print(style_src_features.size())
+        
+        style += (style_tgt + style_tgt_features - style_src - style_src_features) * self.evaluate_kwargs['beta']
         style = torch.mean(style, 1).unsqueeze(1)
         outputs = self.net.generate(input_ids=source_ids, use_cache_extractor_outputs=style,
                                     #do_sample=False, num_beams = 8,
@@ -979,3 +1034,9 @@ class TextSettrModel(LightningModule):
 
     def configure_optimizers(self):
         return torch.optim.AdamW(self.net.parameters(), self.lr)
+    
+    def extract_features(self, sentence):
+        features = torch.FloatTensor([len(tokenize(sentence)), len(sentence),
+                              get_dependency_tree_depth(sentence, language='pt'), 
+                              get_lexical_complexity_score(sentence, language='pt')])
+        return features

@@ -2,6 +2,12 @@ from torch.utils.data import Dataset, DataLoader
 import ast
 import pytorch_lightning as pl
 import time
+import torch
+from source.feature_extraction import (
+    get_lexical_complexity_score,
+    get_dependency_tree_depth,
+)
+from source.helpers import tokenize
 
 class TrainCCNetDataset(Dataset):
     def __init__(self, src_inst, tgt_inst, tgt_context_inst, tokenizer, sent_length):
@@ -25,9 +31,15 @@ class TrainCCNetDataset(Dataset):
         ids = tokenized["input_ids"].squeeze()
         mask = tokenized["attention_mask"].squeeze()
         return (ids, mask)
+    
+    def extract_features(self, sentence):
+        features = (torch.FloatTensor([len(tokenize(sentence)), len(sentence),
+                              get_dependency_tree_depth(sentence, language='pt'), 
+                              get_lexical_complexity_score(sentence, language='pt')]),)
+        return features
 
     def __getitem__(self, index):
-        return self.to_token(self.tgt_context_inst[index]) + self.to_token(self.tgt_inst[index]) + self.to_token(self.src_inst[index])
+        return self.to_token(self.tgt_context_inst[index]) + self.to_token(self.tgt_inst[index]) + self.to_token(self.src_inst[index]) + self.extract_features(self.tgt_inst[index])
 
 class CCNetDataset(Dataset):
     def __init__(self, src_inst, tgt_inst, tgt_context_inst, tokenizer, sent_length):
@@ -56,8 +68,14 @@ class CCNetDataset(Dataset):
     #                                 truncation=True, padding="max_length",
     #                                 return_tensors="pt")[0]
 
+    def extract_features(self, sentence):
+        features = (torch.FloatTensor([len(tokenize(sentence)), len(sentence),
+                              get_dependency_tree_depth(sentence, language='pt'), 
+                              get_lexical_complexity_score(sentence, language='pt')]),)
+        return features
+    
     def __getitem__(self, index):
-        return self.to_token(self.tgt_context_inst[index]) + self.to_token(self.tgt_inst[index])
+        return self.to_token(self.tgt_context_inst[index]) + self.to_token(self.tgt_inst[index]) + self.extract_features(self.tgt_context_inst[index])
 
 
 class CCNetDataModule(pl.LightningDataModule):
