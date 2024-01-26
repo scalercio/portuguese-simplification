@@ -89,3 +89,14 @@ def get_dependency_tree_depth(sentence, language='en'):
     if len(tree_depths) == 0:
         return 0
     return max(tree_depths)
+
+def get_syllables(sentence):
+    sentence = sentence.lower()
+    vowels = ['a', 'ã', 'á', 'à', 'â', 'e', 'é', 'ê', 'i','í', 'o', 'ô', 'ó', 'õ', 'u', 'ú']
+    ditongos = ['ãe', 'ai', 'ão', 'au', 'ei', 'eu', 'éu', 'ia', 'ie', 'io', 'iu', 'õe', 'oi', 'ói', 'ou', 'ua', 'ue', 'uê', 'ui']
+    tritongos = ['uai', 'uei', 'uão', 'uõe', 'uiu', 'uou']
+    
+    count = sum(sentence.count(vowel) for vowel in vowels)
+    count -=sum(sentence.count(ditongo) for ditongo in ditongos)
+    count -=sum(sentence.count(tritongo) for tritongo in tritongos)    
+    return count
