@@ -57,9 +57,9 @@ if __name__ == '__main__':
 
     module = CCNetDataModule(batch_size, tokenizer, sent_length)
 
-    model_paths = ['simplification-pt-t5-control-tokens/wbl5hja4/checkpoints/epoch=8-step=55553.ckpt']#'simplification-pt-v2/brarugfs/checkpoints/epoch=2-step=16468.ckpt']##, 'simplification-pt-v2/mnfh6a5f/checkpoints/epoch=14-step=144102.ckpt']
+    model_paths = ['simplification-pt-t5-control-tokens/zal8f8ta/checkpoints/epoch=9-step=62089.ckpt']#['simplification-pt-t5-control-tokens/o0ku19qv/checkpoints/epoch=6-step=41172.ckpt']
     for model_path in model_paths:
-        for beta_val in [ 4, 8, 12, 16]:
+        for beta_val in [4, 8, 10, 12, 14, 16, 18, 20]:
             config['evaluate_kwargs']['beta'] = beta_val
             config['load_ckpt'] = model_path
             logger = WandbLogger(
