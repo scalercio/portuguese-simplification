@@ -19,6 +19,7 @@ import wandb
 from source.feature_extraction import (
     get_lexical_complexity_score,
     get_dependency_tree_depth,
+    get_syllables,
 )
 from source.helpers import tokenize
 
@@ -47,8 +48,21 @@ class FeaturesExtractorFeedForward(nn.Module):
     def __init__(self, d_model):
         super(FeaturesExtractorFeedForward, self).__init__()
         self.mlp = nn.Sequential(
-            LayerNorm(4),
-            nn.Linear(4, d_model),
+            LayerNorm(5),
+            nn.Linear(5, d_model),
+            nn.ReLU(),
+            nn.Linear(d_model, d_model),
+            LayerNorm(d_model)
+        )
+        
+    def forward(self, x):
+        return self.mlp(x)
+    
+class FinalStyleFeedForward(nn.Module):
+    def __init__(self, d_model):
+        super(FinalStyleFeedForward, self).__init__()
+        self.mlp = nn.Sequential(
+            nn.Linear(2 * d_model, d_model),
             nn.ReLU(),
             nn.Linear(d_model, d_model),
             LayerNorm(d_model)
@@ -487,6 +501,7 @@ class T5ForConditionalGenerationWithExtractor(T5PreTrainedModel):
         extractor_config.is_encoder_decoder = False
         self.extractor = T5Stack(extractor_config, self.shared)
         self.feature_extractor = FeaturesExtractorFeedForward(config.d_model)
+        self.final_extractor = FinalStyleFeedForward(config.d_model)
 
         decoder_config = copy.deepcopy(config)
         decoder_config.is_decoder = True
@@ -937,7 +952,10 @@ class TextSettrModel(LightningModule):
         else:
             barlow_twins_loss = 0
         #input_ids[input_ids == self.tokenizer.pad_token_id] = -100
-        extractor_output = torch.mean(extractor_output, 1).unsqueeze(1)
+        #extractor_output = torch.mean(extractor_output, 1).unsqueeze(1)
+        concat_representations = torch.cat((torch.mean(extractor_output, 1), feature_extractor_output), dim = 1)
+        final_style = self.net.final_extractor(concat_representations)
+        final_style = final_style.unsqueeze(1)
         if self.rec_val > 0:            
             output_loss = self.net(input_ids=noisy_input_ids, labels=input_ids,
                                    use_cache_extractor_outputs=extractor_output).loss
@@ -947,7 +965,7 @@ class TextSettrModel(LightningModule):
         
         para_loss = self.net(input_ids=input_ids, labels=labels_ids,
                              attention_mask=attention_mask, decoder_attention_mask=decoder_attention_mask,
-                               use_cache_extractor_outputs=extractor_output+feature_extractor_output.unsqueeze(1)).loss
+                               use_cache_extractor_outputs=final_style).loss
         self.log('train_para_loss', para_loss, on_epoch = True)
         
         if output_loss is not None:
@@ -965,28 +983,27 @@ class TextSettrModel(LightningModule):
         style = self.net.get_extractor_output(
             use_cache_context_ids=source_ids)
         feature_extractor_output = self.net.feature_extractor(features)
-        feature_extractor_output = feature_extractor_output.unsqueeze(1)
-        style += feature_extractor_output
+        final_style = self.net.final_extractor(torch.cat((torch.mean(style, 1), feature_extractor_output), dim = 1))
+        #final_style = final_style.unsqueeze(1)
         
         style_src = self.net.get_extractor_output(
             use_cache_context_ids=self.src_ids.to(device='cuda'))
         style_tgt = self.net.get_extractor_output(
             use_cache_context_ids=self.tgt_ids.to(device='cuda'))
-        style_src = torch.mean(style_src, dim = 0).unsqueeze(0)
-        style_tgt = torch.mean(style_tgt, dim = 0).unsqueeze(0)
-        style_src = torch.mean(style_src, dim = 1).unsqueeze(1)
-        style_tgt = torch.mean(style_tgt, dim = 1).unsqueeze(1)
         #print(style_src.size())
         
         style_src_features = self.net.feature_extractor(self.src_ids_features.to(device='cuda'))
         style_tgt_features = self.net.feature_extractor(self.tgt_ids_features.to(device='cuda'))
-        style_src_features = torch.mean(style_src_features, dim = 0).unsqueeze(0).unsqueeze(1)
-        style_tgt_features = torch.mean(style_tgt_features, dim = 0).unsqueeze(0).unsqueeze(1)
         #print(style_src_features.size())
         
-        style += (style_tgt + style_tgt_features - style_src - style_src_features) * self.evaluate_kwargs['beta']
-        style = torch.mean(style, 1).unsqueeze(1)
-        outputs = self.net.generate(input_ids=source_ids, use_cache_extractor_outputs=style,
+        style_src_final = self.net.final_extractor(torch.cat((torch.mean(style_src, 1), style_src_features), dim = 1))
+        style_tgt_final = self.net.final_extractor(torch.cat((torch.mean(style_tgt, 1), style_tgt_features), dim = 1))
+        style_src_final = torch.mean(style_src_final, dim = 0).unsqueeze(0)
+        style_tgt_final = torch.mean(style_tgt_final, dim = 0).unsqueeze(0)
+        
+        final_style += (style_tgt_final - style_src_final) * self.evaluate_kwargs['beta']
+        final_style = final_style.unsqueeze(1)
+        outputs = self.net.generate(input_ids=source_ids, use_cache_extractor_outputs=final_style,
                                     #do_sample=False, num_beams = 8,
                                     max_length=self.sent_length, attention_mask=attention_masks)
         simplified_sentences = [self.tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
@@ -1037,6 +1054,7 @@ class TextSettrModel(LightningModule):
     
     def extract_features(self, sentence):
         features = torch.FloatTensor([len(tokenize(sentence)), len(sentence),
+                              get_syllables(sentence),
                               get_dependency_tree_depth(sentence, language='pt'), 
                               get_lexical_complexity_score(sentence, language='pt')])
         return features

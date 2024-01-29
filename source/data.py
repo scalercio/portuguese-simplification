@@ -6,6 +6,7 @@ import torch
 from source.feature_extraction import (
     get_lexical_complexity_score,
     get_dependency_tree_depth,
+    get_syllables,
 )
 from source.helpers import tokenize
 
@@ -34,6 +35,7 @@ class TrainCCNetDataset(Dataset):
     
     def extract_features(self, sentence):
         features = (torch.FloatTensor([len(tokenize(sentence)), len(sentence),
+                              get_syllables(sentence),
                               get_dependency_tree_depth(sentence, language='pt'), 
                               get_lexical_complexity_score(sentence, language='pt')]),)
         return features
@@ -70,6 +72,7 @@ class CCNetDataset(Dataset):
 
     def extract_features(self, sentence):
         features = (torch.FloatTensor([len(tokenize(sentence)), len(sentence),
+                              get_syllables(sentence),
                               get_dependency_tree_depth(sentence, language='pt'), 
                               get_lexical_complexity_score(sentence, language='pt')]),)
         return features
