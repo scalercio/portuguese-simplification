@@ -8,6 +8,7 @@ from functools import lru_cache
 
 import Levenshtein
 import numpy as np
+import re
 
 from source.paths import get_fasttext_embeddings_path
 from source.text import spacy_process, get_content_words
@@ -93,10 +94,13 @@ def get_dependency_tree_depth(sentence, language='en'):
 def get_syllables(sentence):
     sentence = sentence.lower()
     vowels = ['a', 'ã', 'á', 'à', 'â', 'e', 'é', 'ê', 'i','í', 'o', 'ô', 'ó', 'õ', 'u', 'ú']
-    ditongos = ['ãe', 'ai', 'ão', 'au', 'ei', 'eu', 'éu', 'ia', 'ie', 'io', 'iu', 'õe', 'oi', 'ói', 'ou', 'ua', 'ue', 'uê', 'ui']
-    tritongos = ['uai', 'uei', 'uão', 'uõe', 'uiu', 'uou']
+    tritongos = ['uai', 'uei', 'uiu', 'uão', 'uõe', 'uou']
     
     count = sum(sentence.count(vowel) for vowel in vowels)
-    count -=sum(sentence.count(ditongo) for ditongo in ditongos)
-    count -=sum(sentence.count(tritongo) for tritongo in tritongos)    
+    count -=get_ditongos(sentence)
+    count -=sum(sentence.count(tritongo) for tritongo in tritongos)
+    #count -=sum(sentence.count(tritongo) for tritongo in tritongos2)*2 
     return count
+
+def get_ditongos(sentence):
+    return len(re.findall('(ãe|ai|ão|au|ei|eu|éu|ia|ie|io|iu|õe|oi|ói|ou|ua|ue|uê|ui)',sentence))
