@@ -33,13 +33,14 @@ if __name__ == '__main__':
     torch.manual_seed(rand_seed)
 
     # hyperparameters
-    batch_size = 72
+    batch_size = 8
     sent_length = 85
     lambda_val = 0
     delta_val = 1e-4
     rec_val = 0
     lr = 1e-4
-    model_version = "unicamp-dl/ptt5-base-portuguese-vocab"
+    model_version = "unicamp-dl/ptt5-large-portuguese-vocab"
+    linguistic_features = True
     dataset = 'ccnet'
     config = {
         'sent_length': sent_length,
@@ -50,16 +51,17 @@ if __name__ == '__main__':
         'lr': lr,
         'evaluate_kwargs': get_evaluate_kwargs("pt"),
         'model_version': model_version,
+        'linguistic_features': linguistic_features,
         'load_ckpt': None#'simplification-pt/4tnl668c/checkpoints/epoch=9-step=90187.ckpt',
     }
 
-    tokenizer = T5TokenizerFast.from_pretrained("unicamp-dl/ptt5-base-portuguese-vocab")
+    tokenizer = T5TokenizerFast.from_pretrained("unicamp-dl/ptt5-large-portuguese-vocab")
 
     module = CCNetDataModule(batch_size, tokenizer, sent_length)
 
-    model_paths = ['simplification-pt-t5-control-tokens/zal8f8ta/checkpoints/epoch=9-step=62089.ckpt']#['simplification-pt-t5-control-tokens/o0ku19qv/checkpoints/epoch=6-step=41172.ckpt']
+    model_paths = ['simplification-pt-t5-control-tokens/8f6h09sr/checkpoints/epoch=5-step=38235.ckpt']#['simplification-pt-t5-control-tokens/0kllhtf6/checkpoints/epoch=7-step=56616.ckpt']#['simplification-pt-v2/v1wowj4y/checkpoints/epoch=0-step=2205.ckpt']#
     for model_path in model_paths:
-        for beta_val in [4, 8, 10, 12, 14, 16, 18, 20]:
+        for beta_val in [12]:#,10,12,14,16,18,20]:
             config['evaluate_kwargs']['beta'] = beta_val
             config['load_ckpt'] = model_path
             logger = WandbLogger(

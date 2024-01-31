@@ -483,7 +483,7 @@ class T5ForConditionalGenerationWithExtractor(T5PreTrainedModel):
         r"decoder\.block\.0\.layer\.1\.EncDecAttention\.relative_attention_bias\.weight",
     ]
 
-    def __init__(self, config):
+    def __init__(self, config, linguistic_features):
         super().__init__(config)
         self.model_dim = config.d_model
         self.lambda_factor = 1
@@ -500,8 +500,10 @@ class T5ForConditionalGenerationWithExtractor(T5PreTrainedModel):
         extractor_config.use_cache = False
         extractor_config.is_encoder_decoder = False
         self.extractor = T5Stack(extractor_config, self.shared)
-        self.feature_extractor = FeaturesExtractorFeedForward(config.d_model)
-        self.final_extractor = FinalStyleFeedForward(config.d_model)
+        self.linguistic_features = linguistic_features
+        if self.linguistic_features:
+            self.feature_extractor = FeaturesExtractorFeedForward(config.d_model)
+            self.final_extractor = FinalStyleFeedForward(config.d_model)
 
         decoder_config = copy.deepcopy(config)
         decoder_config.is_decoder = True
@@ -884,12 +886,12 @@ class T5ForConditionalGenerationWithExtractor(T5PreTrainedModel):
 
 
 class TextSettrModel(LightningModule):
-    def __init__(self, sent_length, batch_size, delta_val, lambda_val, rec_val, lr, evaluate_kwargs, model_version, load_ckpt, tokenizer):
+    def __init__(self, sent_length, batch_size, delta_val, lambda_val, rec_val, lr, evaluate_kwargs, model_version, linguistic_features, load_ckpt, tokenizer):
         super().__init__()
         if 'ptt5' in model_version:
-            self.net = T5ForConditionalGenerationWithExtractor.from_pretrained(model_version)
+            self.net = T5ForConditionalGenerationWithExtractor.from_pretrained(model_version, linguistic_features)
         else:
-            self.net = MT5ForConditionalGenerationWithExtractor.from_pretrained(model_version)
+            self.net = MT5ForConditionalGenerationWithExtractor.from_pretrained(model_version, linguistic_features)
         self.net.extractor = copy.deepcopy(self.net.encoder)
         #print(self.net.encoder.state_dict()['block.1.layer.0.SelfAttention.q.weight'])
         #print(self.net.extractor.state_dict()['block.1.layer.0.SelfAttention.q.weight'])
@@ -901,6 +903,7 @@ class TextSettrModel(LightningModule):
         self.rec_val = rec_val
         self.lr = lr
         self.evaluate_kwargs = evaluate_kwargs
+        self.linguistic_features = linguistic_features
         self.val_simplified_sentences = []
         self.read_exemplars()
 
@@ -938,24 +941,21 @@ class TextSettrModel(LightningModule):
         extractor_output = self.net.get_extractor_output(
             use_cache_context_ids=context_ids)
 
-        feature_extractor_output = self.net.feature_extractor(features)
+        if self.linguistic_features:
+            feature_extractor_output = self.net.feature_extractor(features)
         #extractor_output_input = self.net.get_extractor_output(
         #    use_cache_context_ids=labels_ids)
         
         #extractor_output = torch.mean(extractor_output, 1).unsqueeze(1)
         #extractor_output_input = torch.mean(extractor_output_input, 1).unsqueeze(1)
-        if self.lambda_val > 0:
-            barlow_twins_loss_func = BarlowTwinsLoss(batch_size=64, lambda_coeff = self.delta_val)
-            barlow_twins_loss = barlow_twins_loss_func(
-                extractor_output_input, extractor_output)
-            self.log('train_bt_loss', barlow_twins_loss, on_epoch = True)
-        else:
-            barlow_twins_loss = 0
         #input_ids[input_ids == self.tokenizer.pad_token_id] = -100
         #extractor_output = torch.mean(extractor_output, 1).unsqueeze(1)
-        concat_representations = torch.cat((torch.mean(extractor_output, 1), feature_extractor_output), dim = 1)
-        final_style = self.net.final_extractor(concat_representations)
-        final_style = final_style.unsqueeze(1)
+            concat_representations = torch.cat((torch.mean(extractor_output, 1), feature_extractor_output), dim = 1)
+            final_style = self.net.final_extractor(concat_representations)
+            final_style = final_style.unsqueeze(1)
+        else:
+            final_style = torch.mean(extractor_output, 1).unsqueeze(1)
+            
         if self.rec_val > 0:            
             output_loss = self.net(input_ids=noisy_input_ids, labels=input_ids,
                                    use_cache_extractor_outputs=extractor_output).loss
@@ -969,7 +969,7 @@ class TextSettrModel(LightningModule):
         self.log('train_para_loss', para_loss, on_epoch = True)
         
         if output_loss is not None:
-            output_loss = self.rec_val * output_loss + para_loss + self.lambda_val * barlow_twins_loss
+            output_loss = self.rec_val * output_loss + para_loss
             self.log('train_loss', output_loss, on_epoch = True)
             return output_loss
         else:
@@ -980,11 +980,12 @@ class TextSettrModel(LightningModule):
     def validation_step(self, batch, batch_idx):
         #source_ids, _ = batch[0], batch[1]
         source_ids,  attention_masks, features = batch[0], batch[1], batch[4]
-        style = self.net.get_extractor_output(
+        final_style = self.net.get_extractor_output(
             use_cache_context_ids=source_ids)
-        feature_extractor_output = self.net.feature_extractor(features)
-        final_style = self.net.final_extractor(torch.cat((torch.mean(style, 1), feature_extractor_output), dim = 1))
-        #final_style = final_style.unsqueeze(1)
+        if self.linguistic_features:
+            feature_extractor_output = self.net.feature_extractor(features)
+            final_style = self.net.final_extractor(torch.cat((torch.mean(final_style, 1), feature_extractor_output), dim = 1))
+            final_style = final_style.unsqueeze(1)
         
         style_src = self.net.get_extractor_output(
             use_cache_context_ids=self.src_ids.to(device='cuda'))
@@ -992,17 +993,24 @@ class TextSettrModel(LightningModule):
             use_cache_context_ids=self.tgt_ids.to(device='cuda'))
         #print(style_src.size())
         
-        style_src_features = self.net.feature_extractor(self.src_ids_features.to(device='cuda'))
-        style_tgt_features = self.net.feature_extractor(self.tgt_ids_features.to(device='cuda'))
-        #print(style_src_features.size())
+        if self.linguistic_features:
+            style_src_features = self.net.feature_extractor(self.src_ids_features.to(device='cuda'))
+            style_tgt_features = self.net.feature_extractor(self.tgt_ids_features.to(device='cuda'))
+            ##print(style_src_features.size())
+            #
+            style_src = self.net.final_extractor(torch.cat((torch.mean(style_src, 1), style_src_features), dim = 1))
+            style_tgt = self.net.final_extractor(torch.cat((torch.mean(style_tgt, 1), style_tgt_features), dim = 1))
+            style_src = torch.mean(style_src, dim = 0).unsqueeze(0)
+            style_tgt = torch.mean(style_tgt, dim = 0).unsqueeze(0)
         
-        style_src_final = self.net.final_extractor(torch.cat((torch.mean(style_src, 1), style_src_features), dim = 1))
-        style_tgt_final = self.net.final_extractor(torch.cat((torch.mean(style_tgt, 1), style_tgt_features), dim = 1))
-        style_src_final = torch.mean(style_src_final, dim = 0).unsqueeze(0)
-        style_tgt_final = torch.mean(style_tgt_final, dim = 0).unsqueeze(0)
-        
-        final_style += (style_tgt_final - style_src_final) * self.evaluate_kwargs['beta']
-        final_style = final_style.unsqueeze(1)
+        else:
+            style_src = torch.mean(style_src, dim = 1)
+            style_tgt = torch.mean(style_tgt, dim = 1)
+            style_src = torch.mean(style_src, dim = 0).unsqueeze(0)
+            style_tgt = torch.mean(style_tgt, dim = 0).unsqueeze(0)
+            
+        final_style += (style_tgt - style_src) * self.evaluate_kwargs['beta']
+        final_style = torch.mean(final_style, 1).unsqueeze(1)
         outputs = self.net.generate(input_ids=source_ids, use_cache_extractor_outputs=final_style,
                                     #do_sample=False, num_beams = 8,
                                     max_length=self.sent_length, attention_mask=attention_masks)

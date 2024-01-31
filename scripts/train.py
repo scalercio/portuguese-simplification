@@ -17,6 +17,7 @@ if __name__ == '__main__':
     rec_val = 0
     lr = 1e-4
     model_version = "unicamp-dl/ptt5-large-portuguese-vocab"
+    linguistic_features = True
     dataset = 'ccnet'
     config = {
         'sent_length': sent_length,
@@ -27,6 +28,7 @@ if __name__ == '__main__':
         'lr': lr,
         'evaluate_kwargs': get_evaluate_kwargs("pt"),
         'model_version': model_version,
+        'linguistic_features': linguistic_features,
         'load_ckpt': None#'simplification-pt/4tnl668c/checkpoints/epoch=9-step=90187.ckpt',
     }
     features_kwargs = {
