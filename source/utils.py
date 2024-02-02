@@ -39,6 +39,9 @@ def get_evaluate_kwargs(language, phase='valid'):
             'test_set': 'custom',
             'orig_sents_path': get_data_filepath(TEST_DATASET, 'test', 'complex'),
             'refs_sents_paths': [get_data_filepath(TEST_DATASET, 'test', 'simple')],
+            'src_exemplars': get_data_filepath(TEST_DATASET, 'train', 'complex'),
+            'tgt_exemplars': get_data_filepath(TEST_DATASET, 'train', 'simple'),
+            'beta': 12,
         },
     }[(language, phase)]
 

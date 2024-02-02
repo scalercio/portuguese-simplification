@@ -1031,6 +1031,61 @@ class TextSettrModel(LightningModule):
         
         self.log_dict(scores)
         self.val_simplified_sentences.clear()
+        
+    def test_step(self, batch, batch_idx):
+        #source_ids, _ = batch[0], batch[1]
+        source_ids,  attention_masks, features = batch[0], batch[1], batch[4]
+        final_style = self.net.get_extractor_output(
+            use_cache_context_ids=source_ids)
+        if self.linguistic_features:
+            feature_extractor_output = self.net.feature_extractor(features)
+            final_style = self.net.final_extractor(torch.cat((torch.mean(final_style, 1), feature_extractor_output), dim = 1))
+            final_style = final_style.unsqueeze(1)
+        
+        style_src = self.net.get_extractor_output(
+            use_cache_context_ids=self.src_ids.to(device='cuda'))
+        style_tgt = self.net.get_extractor_output(
+            use_cache_context_ids=self.tgt_ids.to(device='cuda'))
+        #print(style_src.size())
+        
+        if self.linguistic_features:
+            style_src_features = self.net.feature_extractor(self.src_ids_features.to(device='cuda'))
+            style_tgt_features = self.net.feature_extractor(self.tgt_ids_features.to(device='cuda'))
+            ##print(style_src_features.size())
+            #
+            style_src = self.net.final_extractor(torch.cat((torch.mean(style_src, 1), style_src_features), dim = 1))
+            style_tgt = self.net.final_extractor(torch.cat((torch.mean(style_tgt, 1), style_tgt_features), dim = 1))
+            style_src = torch.mean(style_src, dim = 0).unsqueeze(0)
+            style_tgt = torch.mean(style_tgt, dim = 0).unsqueeze(0)
+        
+        else:
+            style_src = torch.mean(style_src, dim = 1)
+            style_tgt = torch.mean(style_tgt, dim = 1)
+            style_src = torch.mean(style_src, dim = 0).unsqueeze(0)
+            style_tgt = torch.mean(style_tgt, dim = 0).unsqueeze(0)
+            
+        final_style += (style_tgt - style_src) * self.evaluate_kwargs['beta']
+        final_style = torch.mean(final_style, 1).unsqueeze(1)
+        outputs = self.net.generate(input_ids=source_ids, use_cache_extractor_outputs=final_style,
+                                    #do_sample=False, num_beams = 8,
+                                    max_length=self.sent_length, attention_mask=attention_masks)
+        simplified_sentences = [self.tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
+        self.val_simplified_sentences.extend(simplified_sentences)
+    
+    def on_test_epoch_end(self):
+        sys_sents_path = get_repo_dir() / str(wandb.run.project) / str(wandb.run.name) / f'{self.current_epoch}_{self.global_step}'
+        write_lines(self.val_simplified_sentences, sys_sents_path)
+        scores =  evaluate_system_output(
+            self.evaluate_kwargs['test_set'],
+            sys_sents_path=sys_sents_path,
+            orig_sents_path=self.evaluate_kwargs['orig_sents_path'],
+            refs_sents_paths=self.evaluate_kwargs['refs_sents_paths'],
+            metrics=['sari', 'bleu', 'fkgl'],
+            quality_estimation=False,
+        )
+        
+        self.log_dict(scores)
+        self.val_simplified_sentences.clear()
         #noisy_input_ids = apply_noise(
         #    input_ids, self.tokenizer, self.sent_length)
         #noisy_input_ids = self.net.generate(input_ids=noisy_input_ids, use_cache_extractor_outputs=0,
