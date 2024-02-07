@@ -24,13 +24,18 @@ if __name__ == '__main__':
     torch.manual_seed(rand_seed)
 
     # hyperparameters
-    prompt = 'kewetal'
-    repeat = False
+    prompt = 'fengetal'
+    repeat = True
+    few_shot = True
+    one_shot = False
+    tipo_one_shot = 'sintática'
     model_version = "chatgpt"
     dataset = 'ccnet'
     config = {
         'prompt': prompt,
         'repeat': repeat,
+        'few_shot': few_shot,
+        'one_shot': one_shot,
         'evaluate_kwargs': get_evaluate_kwargs("pt", 'test'),
         'model_version': model_version,
     }
@@ -45,20 +50,37 @@ if __name__ == '__main__':
     with open(config['evaluate_kwargs']['refs_sents_paths'][0], 'r') as f1, open(config['evaluate_kwargs']['orig_sents_path'], 'r') as f2:
         src_seq = f2.readlines()
         ref_seq = f1.readlines()
+    #    src_seq = f2.read().split('\n')
+    #    ref_seq = f1.read().split('\n')
+    #
+    #if src_seq[-1] == "":
+    #    src_seq=src_seq[:-1]
+    #
+    #if ref_seq[-1] == "":
+    #    ref_seq=ref_seq[:-1]
+    #for sent in ref_seq:
+    #    print(sent)
+    print(len(src_seq))
     assert len(src_seq) == len(ref_seq)
+    assert not one_shot == few_shot
     result = 0
     for i in range(3):
-        if repeat:
-            simplified_file = f'data/porsimplessent/chatgpt/simplified_chatgpt_{prompt}_zeroshot_repete_{i+1}.json'
+        if 'feng' in prompt and few_shot:
+            simplified_file = f"data/porsimplessent/chatgpt/few_shot_feng/simplified_gpt-3.5-turbo-instruct_fengetal_few_shot_repete_4few_{i+1}.json"
+        elif few_shot:
+            simplified_file = f"data/porsimplessent/chatgpt/few_shot_kew/simplified_gpt-3.5-turbo-instruct_kewetal_few_shot_repete_4few_{i+1}.json"
+        elif 'feng' in prompt:
+            simplified_file = f'data/porsimplessent/chatgpt/one_shot_feng/simplified_gpt-3.5-turbo-instruct_fengetal_one_shot_repete_{tipo_one_shot}_{i+1}.json'
         else:
-            simplified_file = f'data/porsimplessent/chatgpt/simplified_chatgpt_{prompt}_zeroshot_{i+1}.json'
-            
+            simplified_file = f'data/porsimplessent/chatgpt/one_shot_kew/simplified_gpt-3.5-turbo-instruct_kewetal_one_shot_repete_{tipo_one_shot}_{i+1}.json'
+                       
         print(simplified_file)
         with open(simplified_file) as f3:
             data=json.load(f3)
             
         simplified_sentences=[]
         for sentence_dict in data:
+            #print(sentence_dict['simplified'])
             simplified_sentences.append(sentence_dict['simplified'])
         
         assert len(src_seq) == len(simplified_sentences)

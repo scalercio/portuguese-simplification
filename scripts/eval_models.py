@@ -41,6 +41,7 @@ if __name__ == '__main__':
     lr = 1e-4
     model_version = "unicamp-dl/ptt5-large-portuguese-vocab"
     linguistic_features = True
+    testset = False
     dataset = 'ccnet'
     config = {
         'sent_length': sent_length,
@@ -49,9 +50,10 @@ if __name__ == '__main__':
         'lambda_val': lambda_val,
         'rec_val': rec_val,
         'lr': lr,
-        'evaluate_kwargs': get_evaluate_kwargs("pt"),
+        'evaluate_kwargs': get_evaluate_kwargs("pt",'test') if testset else get_evaluate_kwargs("pt"),
         'model_version': model_version,
         'linguistic_features': linguistic_features,
+        'testset': testset,
         'load_ckpt': None#'simplification-pt/4tnl668c/checkpoints/epoch=9-step=90187.ckpt',
     }
 
@@ -59,13 +61,13 @@ if __name__ == '__main__':
 
     module = CCNetDataModule(batch_size, tokenizer, sent_length)
 
-    model_paths = ['simplification-pt-t5-control-tokens/8f6h09sr/checkpoints/epoch=5-step=38235.ckpt']#['simplification-pt-t5-control-tokens/0kllhtf6/checkpoints/epoch=7-step=56616.ckpt']#['simplification-pt-v2/v1wowj4y/checkpoints/epoch=0-step=2205.ckpt']#
+    model_paths = ['simplification-pt-t5-control-tokens/0kllhtf6/checkpoints/epoch=7-step=56616.ckpt']#['simplification-pt-v2/v1wowj4y/checkpoints/epoch=0-step=2205.ckpt']#['simplification-pt-t5-control-tokens/8f6h09sr/checkpoints/epoch=5-step=38235.ckpt']#
     for model_path in model_paths:
-        for beta_val in [12]:#,10,12,14,16,18,20]:
+        for beta_val in [8,10,12,14,16,18,20]:
             config['evaluate_kwargs']['beta'] = beta_val
             config['load_ckpt'] = model_path
             logger = WandbLogger(
-                project="eval-simplification-pt",
+                project="test-simplification-pt",
                 job_type=f'ptt5-base_{sent_length:03d}',
                 reinit = True,
                 config=config            
@@ -74,5 +76,8 @@ if __name__ == '__main__':
                                   devices = 1, num_sanity_val_steps=0, gradient_clip_val=5)
             model = TextSettrModel.load_from_checkpoint(model_path,
                                                         **config, tokenizer=tokenizer)
-            trainer.validate(model, module)
+            if testset:
+                trainer.test(model, module)
+            else:
+                trainer.validate(model, module)
             wandb.finish()
