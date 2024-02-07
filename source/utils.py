@@ -134,3 +134,12 @@ def apply_noise(sents, tokenizer, sent_length):
         sent = pad_sent(sent, sent_length)
         res += (sent,)
     return torch.vstack(res)
+
+def get_outputs_unchanged(simples, sources):
+    assert len(simples)==len(sources)
+    count = 0
+    for (simple, original) in zip(simples, sources):
+        if simple.lower().strip() == original.lower().strip():
+            print(simple)
+            count=count+1
+    return count*100/len(simples)
