@@ -48,8 +48,8 @@ class FeaturesExtractorFeedForward(nn.Module):
     def __init__(self, d_model):
         super(FeaturesExtractorFeedForward, self).__init__()
         self.mlp = nn.Sequential(
-            LayerNorm(5),
-            nn.Linear(5, d_model),
+            LayerNorm(4),
+            nn.Linear(4, d_model),
             nn.ReLU(),
             nn.Linear(d_model, d_model),
             LayerNorm(d_model)
@@ -1117,7 +1117,6 @@ class TextSettrModel(LightningModule):
     
     def extract_features(self, sentence):
         features = torch.FloatTensor([len(tokenize(sentence)), len(sentence),
-                              get_syllables(sentence),
                               get_dependency_tree_depth(sentence, language='pt'), 
                               get_lexical_complexity_score(sentence, language='pt')])
         return features
