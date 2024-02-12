@@ -140,6 +140,6 @@ def get_outputs_unchanged(simples, sources):
     count = 0
     for (simple, original) in zip(simples, sources):
         if simple.lower().strip() == original.lower().strip():
-            print(simple)
+            #print(simple)
             count=count+1
     return count*100/len(simples)
