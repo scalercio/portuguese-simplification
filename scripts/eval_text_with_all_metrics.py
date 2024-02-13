@@ -30,28 +30,45 @@ if __name__ == '__main__':
     torch.manual_seed(rand_seed)
 
     testset = True
-    dataset = 'ccnet'
+    dataset = 'asset'
     config = {
         'evaluate_kwargs': get_evaluate_kwargs("pt",'test') if testset else get_evaluate_kwargs("pt"),
         'testset': testset,
-        'simplifications_path': 'test-simplification-pt/restful-sea-4/0_0',
+        'simplifications_path': 'asset-test-simplification-pt/bright-mandu-3/0_0'#'data/asset/muss-test-simplification'#'test-simplification-pt/luminous-snake-18/0_0'#'test-simplification-pt/twinkling-lamp-19/0_0'#'test-simplification-pt/winter-frost-15/0_0',#, 
     }
-    with open(config['evaluate_kwargs']['refs_sents_paths'][0], 'r') as f1, open(config['simplifications_path'], 'r') as f2, open(config['evaluate_kwargs']['orig_sents_path'], 'r') as f3:
-        ref_seq = f1.readlines()    
-        simple_seq = f2.readlines()
-        src_seq = f3.readlines()
+    if 'asset' not in dataset:        
+        with open(config['evaluate_kwargs']['refs_sents_paths'][0], 'r') as f1, open(config['simplifications_path'], 'r') as f2, open(config['evaluate_kwargs']['orig_sents_path'], 'r') as f3:
+            ref_seq = f1.readlines()    
+            simple_seq = f2.readlines()
+            src_seq = f3.readlines()
+    else:
+        with open(config['simplifications_path'], 'r') as f2, open(config['evaluate_kwargs']['orig_sents_path'], 'r') as f3:
+            simple_seq = f2.readlines()
+            src_seq = f3.readlines()
+        ref_seq = []
+        for i in range(10):
+            with open(f'data/asset/test/simp{i}.txt') as f:
+                ref_seq.append(f.readlines())
         
+
     print(len(simple_seq))
-    assert len(simple_seq) == len(ref_seq)
+    if 'asset' not in dataset:
+        assert len(simple_seq) == len(ref_seq)
+    else:
+        assert len(simple_seq) == len(ref_seq[9])
+    
     assert len(simple_seq) == len(src_seq)
     results={}
     results['sari'] = corpus_sari(orig_sents=src_seq,
                        sys_sents=simple_seq,
-                       refs_sents=[ref_seq])
+                       refs_sents=ref_seq)
     results['bleu'] = corpus_bleu(sys_sents=simple_seq,
-                       refs_sents=[ref_seq],
+                       refs_sents=ref_seq,
                        lowercase=True)
-    P, R, F1 = score(simple_seq, ref_seq, lang = 'pt', verbose = True)
+    if 'asset' in dataset:
+        P, R, F1 = score(simple_seq, list(map(list, zip(*ref_seq))), lang = 'pt', verbose = True)
+    else:
+        P, R, F1 = score(simple_seq, ref_seq, lang = 'pt', verbose = True)
     results['bert_score'] = F1.mean()
     results['outputs_unchanged'] = get_outputs_unchanged(simple_seq,src_seq)
     print(results)
