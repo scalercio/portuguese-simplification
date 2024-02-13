@@ -8,8 +8,10 @@ import torch
 import wandb
 import json
 from lightning.pytorch.loggers import WandbLogger
-from source.utils import get_evaluate_kwargs
+from source.utils import get_evaluate_kwargs, get_outputs_unchanged
 from easse.sari import corpus_sari
+from easse.bleu import corpus_bleu
+from bert_score import score
 import random
 from source.helpers import write_lines
 
@@ -17,14 +19,6 @@ import warnings
 warnings.filterwarnings("ignore")
 
 if __name__ == '__main__':
-    """# 1. Prepare Data"""
-    print(torch.__version__)
-    print(torch.version.cuda)
-    # set random seed
-    rand_seed = 123
-    np.random.seed(rand_seed)
-    torch.manual_seed(rand_seed)
-
     # hyperparameters
     prompt = 'fengetal'
     repeat = True
@@ -67,8 +61,12 @@ if __name__ == '__main__':
     assert not one_shot == few_shot
     result = 0
     all_sentences = []
+    ref_final = []
+    src_final = []
     for tipo_one_shot in types:
         for i in range(3):
+            ref_final.extend(ref_seq)
+            src_final.extend(src_seq)
             if 'feng' in prompt and few_shot:
                 simplified_file = f"data/porsimplessent/chatgpt/few_shot_feng/simplified_gpt-3.5-turbo-instruct_fengetal_few_shot_repete_4few_{i+1}.json"
             elif few_shot:
@@ -82,29 +80,26 @@ if __name__ == '__main__':
             with open(simplified_file) as f3:
                 data=json.load(f3)
 
-            simplified_sentences=[]
             for sentence_dict in data:
                 #print(sentence_dict['simplified'])
-                simplified_sentences.append(sentence_dict['simplified'])
+                all_sentences.append(sentence_dict['simplified'])
 
-            assert len(src_seq) == len(simplified_sentences)
-            all_sentences.append(simplified_sentences)
-            sari = corpus_sari(orig_sents=src_seq,
-                               sys_sents=simplified_sentences,
-                               refs_sents=[ref_seq])
-            result +=sari
-            print(sari)
-        print(result/3)
-        print('Fim desse tipo')
-        result=0       
-    #logger.log({'sari':0})
-    human_selection = []
-    random.seed(777)
-    print(len(all_sentences[0]))
-    for i in range(len(all_sentences[0])):
-        text = all_sentences[random.choice(range(len(all_sentences)))][i]
-        print(f'{i}_{text}')
-        human_selection.append(text)
-        #print(all_sentences[0][i],all_sentences[1][i])
-    write_lines(human_selection, f'/home/arthur/nlp/repo/simplification/portuguese-simplification/data/porsimplessent/chatgpt/human_evaluation.txt')
+    assert len(ref_final) == len(all_sentences)
+    assert len(ref_final) == len(src_final)
+    print(len(ref_final)/12)
+
+    results={}
+    
+    results['sari'] = corpus_sari(orig_sents=src_final,
+                       sys_sents=all_sentences,
+                       refs_sents=[ref_final])
+    
+    results['bleu'] = corpus_bleu(sys_sents=all_sentences,
+                       refs_sents=[ref_final],
+                       lowercase=True)
+    P, R, F1 = score(all_sentences, ref_final, lang = 'pt', verbose = True)
+    results['bert_score'] = F1.mean()
+    results['outputs_unchanged'] = get_outputs_unchanged(all_sentences,src_final)
+    print(results)
+
     wandb.finish()
