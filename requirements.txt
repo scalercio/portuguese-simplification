@@ -1,3 +1,9 @@
+lightning @ git+https://github.com/Lightning-AI/lightning@master
+jsonargparse[signatures]  # CLI
+transformers
+python-Levenshtein
+cachetools
+imohash
+sacremoses
 easse@ git+https://github.com/feralvam/easse.git
-cachetools>=4.0.0
-imohash>=1.0.4
+spacy
