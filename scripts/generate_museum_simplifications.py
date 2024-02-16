@@ -41,14 +41,19 @@ if __name__ == '__main__':
     #    print(sent)
     complex_sentences=[]
     simple_sentences=[]
+    paragraph = 0
+    n_sent = 0
     for i in range(42):
         print(i)
         with open(f"data/museu/doc_{i}.original", 'r') as f1, open(f"data/museu/doc_{i}.simple", 'r') as f2:
             complex_seqs = f1.readlines()
             simple_seqs = f2.readlines()
+        n_sent+=len(simple_seqs)
         assert len(complex_seqs) == len(simple_seqs)
         for complex_seq, simple_seq in zip(complex_seqs,simple_seqs):
             if complex_seq.strip()=='':
+                n_sent-=1
+                paragraph+=1
                 continue
             if complex_seq[0]=='C':
                 #print(complex_seq.strip().split('   '))
@@ -60,6 +65,8 @@ if __name__ == '__main__':
                 continue
             complex_sentences.append(complex_seq.strip().split('   ')[1])
             simple_sentences.append(simple_seq.strip())
+    print(n_sent)
+    print(paragraph+42)
     assert len(simple_sentences) == len(complex_sentences)
     sentences = merge(complex_sentences, simple_sentences)
     print(len(sentences))

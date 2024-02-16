@@ -30,11 +30,11 @@ if __name__ == '__main__':
     torch.manual_seed(rand_seed)
 
     testset = True
-    dataset = 'asset'
+    dataset = 'museu'
     config = {
         'evaluate_kwargs': get_evaluate_kwargs("pt",'test') if testset else get_evaluate_kwargs("pt"),
         'testset': testset,
-        'simplifications_path': 'asset-test-simplification-pt/bright-mandu-3/0_0'#'data/asset/muss-test-simplification'#'test-simplification-pt/luminous-snake-18/0_0'#'test-simplification-pt/twinkling-lamp-19/0_0'#'test-simplification-pt/winter-frost-15/0_0',#, 
+        'simplifications_path': 'museu-test-simplification-pt/angelic-violet-17/0_0'#'data/asset/muss-test-simplification'#'test-simplification-pt/luminous-snake-18/0_0'#'test-simplification-pt/twinkling-lamp-19/0_0'#'test-simplification-pt/winter-frost-15/0_0',#, 
     }
     if 'asset' not in dataset:        
         with open(config['evaluate_kwargs']['refs_sents_paths'][0], 'r') as f1, open(config['simplifications_path'], 'r') as f2, open(config['evaluate_kwargs']['orig_sents_path'], 'r') as f3:
@@ -61,9 +61,9 @@ if __name__ == '__main__':
     results={}
     results['sari'] = corpus_sari(orig_sents=src_seq,
                        sys_sents=simple_seq,
-                       refs_sents=ref_seq)
+                       refs_sents=[ref_seq])
     results['bleu'] = corpus_bleu(sys_sents=simple_seq,
-                       refs_sents=ref_seq,
+                       refs_sents=[ref_seq],
                        lowercase=True)
     if 'asset' in dataset:
         P, R, F1 = score(simple_seq, list(map(list, zip(*ref_seq))), lang = 'pt', verbose = True)
