@@ -20,6 +20,29 @@ from bert_score import score
 import warnings
 warnings.filterwarnings("ignore")
 
+def generate_sari_scores(original_sentences, simplified_sentences, reference_sentences, iterations=1000, sample_size=100):
+    """
+    Generate multiple SARI scores using bootstrapping.
+    
+    :param original_sentences: List of original sentences.
+    :param simplified_sentences: List of simplified sentences.
+    :param reference_sentences: List of reference sentences.
+    :param iterations: Number of bootstrap samples to generate.
+    :param sample_size: Number of sentences to sample in each bootstrap sample.
+    :return: List of SARI scores.
+    """
+    sari_scores = []
+    for _ in range(iterations):
+        indices = np.random.choice(len(original_sentences), sample_size, replace=True)
+        sampled_originals = [original_sentences[idx] for idx in indices]
+        sampled_simplifications = [simplified_sentences[idx] for idx in indices]
+        sampled_references = [reference_sentences[idx] for idx in indices]
+        
+        score = corpus_sari(orig_sents=sampled_originals, sys_sents=sampled_simplifications, refs_sents=[sampled_references])
+        sari_scores.append(score)
+    
+    return sari_scores
+
 if __name__ == '__main__':
     """# 1. Prepare Data"""
     print(torch.__version__)
@@ -58,6 +81,10 @@ if __name__ == '__main__':
         assert len(simple_seq) == len(ref_seq[9])
     
     assert len(simple_seq) == len(src_seq)
+
+    sari_scores = generate_sari_scores(src_seq, simple_seq, ref_seq)
+    print(f"Generated SARI scores: {sari_scores[:10]}...")  # Print *only* first 10 scores
+
     results={}
     results['sari'] = corpus_sari(orig_sents=src_seq,
                        sys_sents=simple_seq,
