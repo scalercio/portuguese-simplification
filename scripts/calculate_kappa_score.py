@@ -15,13 +15,13 @@ def calculate_kappa_scores_by_category(df):
         results_kappa[category] = kappa
     return results_kappa
 
-def calculate_overall_kappa_scores(df):
-    """Calculate overall Cohen's Kappa scores using quadratic weights."""
+def calculate_overall_kappa_score(df):
+    """Calculate overall Cohen's Kappa score using quadratic weights."""
     kappa = cohen_kappa_score(df['annotator_1'], df['annotator_2'], weights='quadratic')
     return kappa
 
 def print_results(results_kappa):
-    """Print Cohen's Kappa scores for each category."""
+    """Print Cohen's Kappa scores."""
     if isinstance(results_kappa, dict):
         print('\n'.join([f"'{category}': {score}" for category, score in results_kappa.items()]))
     elif isinstance(results_kappa, float):
@@ -30,5 +30,5 @@ def print_results(results_kappa):
 if __name__ == '__main__':
     df = load_data('data/ccnet/human_evaluation.csv')
     print("Weighted Kappa Scores:")
-    print_results(calculate_overall_kappa_scores(df))
+    print_results(calculate_overall_kappa_score(df))
     print_results(calculate_kappa_scores_by_category(df))
