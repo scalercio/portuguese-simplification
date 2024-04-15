@@ -38,7 +38,7 @@ if __name__ == '__main__':
     }
     if 'asset' not in dataset:        
         with open(config['evaluate_kwargs']['refs_sents_paths'][0], 'r') as f1, open(config['simplifications_path'], 'r') as f2, open(config['evaluate_kwargs']['orig_sents_path'], 'r') as f3:
-            ref_seq = f1.readlines()    
+            ref_seq = f1.readlines()
             simple_seq = f2.readlines()
             src_seq = f3.readlines()
     else:
@@ -49,7 +49,7 @@ if __name__ == '__main__':
         for i in range(10):
             with open(f'data/asset/test/simp{i}.txt') as f:
                 ref_seq.append(f.readlines())
-        
+
 
     print(len(simple_seq))
     if 'asset' not in dataset:
