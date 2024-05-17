@@ -7,5 +7,3 @@ imohash
 sacremoses
 easse@ git+https://github.com/feralvam/easse.git
 spacy
-scikit-learn
-pandas
