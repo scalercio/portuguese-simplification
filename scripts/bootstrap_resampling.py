@@ -55,6 +55,28 @@ def generate_sari_confidence_intervals(original_sentences, simplified_sentences,
 
     return sum(sari_scores)/iterations
 
+def compare_with_muss(dataset, **config):
+    if 'asset' not in dataset:        
+        with open(config['evaluate_kwargs']['refs_sents_paths'][0], 'r') as f1, open(config['simplifications_path'], 'r') as f2, open(config['evaluate_kwargs']['orig_sents_path'], 'r') as f3, open(config['simplifications_baseline_path'], 'r') as f4:
+            ref_seq = f1.readlines()
+            simple_seq = f2.readlines()
+            src_seq = f3.readlines()
+            baseline_seq = f4.readlines()
+    else:
+        raise ValueError("Bootstrap resampling not implemented for Asset dataset")
+        
+
+    print(len(simple_seq))
+    assert len(simple_seq) == len(ref_seq)
+    assert len(simple_seq) == len(src_seq)
+    assert len(simple_seq) == len(baseline_seq)
+
+    confidence_intervals = generate_sari_confidence_intervals(src_seq, simple_seq, ref_seq, baseline_seq)
+    print(f"Generated SARI score confidence intervals: {confidence_intervals}")
+    
+def compare_with_gpt(dataset, **config):
+    pass
+
 if __name__ == '__main__':
     """# 1. Prepare Data"""
     print(torch.__version__)
@@ -66,26 +88,14 @@ if __name__ == '__main__':
 
     testset = True
     dataset = 'museu'
+    baseline = 'muss'
     config = {
         'evaluate_kwargs': get_evaluate_kwargs("pt",'test') if testset else get_evaluate_kwargs("pt"),
-        'testset': testset,
-        'simplifications_baseline_path': f'data/{dataset}/muss-test-simplification',
+        'simplifications_baseline_path': f'data/{dataset}/muss-test-simplification' if 'muss' in baseline else None,
         'simplifications_path': 'test-simplification-pt/twinkling-lamp-19/0_0' if 'porsimplessent' in dataset else 'museu-test-simplification-pt/festive-firecracker-7/0_0' 
     }
-    if 'asset' not in dataset:        
-        with open(config['evaluate_kwargs']['refs_sents_paths'][0], 'r') as f1, open(config['simplifications_path'], 'r') as f2, open(config['evaluate_kwargs']['orig_sents_path'], 'r') as f3, open(config['simplifications_baseline_path'], 'r') as f4:
-            ref_seq = f1.readlines()
-            simple_seq = f2.readlines()
-            src_seq = f3.readlines()
-            baseline_seq = f4.readlines()
+    if 'muss' in baseline:
+        compare_with_muss(dataset, **config)
     else:
-        raise ValueError("bootstrap resampling not implemented for Asset dataset")
-        
-
-    print(len(simple_seq))
-    assert len(simple_seq) == len(ref_seq)
-    assert len(simple_seq) == len(src_seq)
-    assert len(simple_seq) == len(baseline_seq)
-
-    confidence_intervals = generate_sari_confidence_intervals(src_seq, simple_seq, ref_seq, baseline_seq)
-    print(f"Generated SARI score confidence intervals: {confidence_intervals}")
+        compare_with_gpt(dataset, **config)
+    
