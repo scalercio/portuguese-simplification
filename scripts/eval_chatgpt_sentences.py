@@ -26,7 +26,14 @@ if __name__ == '__main__':
     one_shot = True
     types = ['sintática','anáfora', 'ordem', 'redundante_lexical']
     model_version = "chatgpt"
-    dataset = 'complex.test.asset.txt_'
+    dataset = 'porsimplessent'
+    if 'museu' in dataset:
+        dataset_string = f'complex.test.{dataset}_'
+    elif 'asset' in dataset:
+        dataset_string = 'complex.test.asset.txt_'
+    else:
+        dataset_string = ''
+    assert dataset_string in ['', 'complex.test.museu_', 'complex.test.asset.txt_']
     config = {
         'prompt': prompt,
         'repeat': repeat,
@@ -36,13 +43,6 @@ if __name__ == '__main__':
         'model_version': model_version,
     }
 
-    logger = WandbLogger(
-        project="chatgpt-simplification-pt",
-        job_type=f'chatgpt_prompt:{prompt}_repeat:{repeat}',
-        reinit = True,
-        mode = 'disabled',
-        config=config            
-    )
     if 'asset' not in dataset:        
         with open(config['evaluate_kwargs']['refs_sents_paths'][0], 'r') as f1, open(config['evaluate_kwargs']['orig_sents_path'], 'r') as f2:
             src_seq = f2.readlines()
@@ -90,7 +90,7 @@ if __name__ == '__main__':
             elif few_shot:
                 simplified_file = f"data/porsimplessent/chatgpt/few_shot_kew/simplified_gpt-3.5-turbo-instruct_kewetal_few_shot_repete_4few_{i+1}.json"
             elif 'feng' in prompt:
-                simplified_file = f'data/asset/chatgpt/one_shot_feng/simplified_gpt-3.5-turbo-instruct_fengetal_one_shot_repete_{tipo_one_shot}_{dataset}{i+1}.json'
+                simplified_file = f'data/{dataset}/chatgpt/one_shot_feng/simplified_gpt-3.5-turbo-instruct_fengetal_one_shot_repete_{tipo_one_shot}_{dataset_string}{i+1}.json'
             else:
                 simplified_file = f'data/porsimplessent/chatgpt/one_shot_kew/simplified_gpt-3.5-turbo-instruct_kewetal_one_shot_repete_{tipo_one_shot}_{i+1}.json'
 
@@ -112,13 +112,22 @@ if __name__ == '__main__':
 
     results={}
     
-    results['sari'] = corpus_sari(orig_sents=src_final,
-                       sys_sents=all_sentences,
-                       refs_sents=ref_final)
+    if 'asset' in dataset:
+        results['sari'] = corpus_sari(orig_sents=src_final,
+                           sys_sents=all_sentences,
+                           refs_sents=ref_final)
+
+        results['bleu'] = corpus_bleu(sys_sents=all_sentences,
+                           refs_sents=ref_final,
+                           lowercase=True)
+    else:
+        results['sari'] = corpus_sari(orig_sents=src_final,
+                           sys_sents=all_sentences,
+                           refs_sents=[ref_final])
     
-    results['bleu'] = corpus_bleu(sys_sents=all_sentences,
-                       refs_sents=ref_final,
-                       lowercase=True)
+        results['bleu'] = corpus_bleu(sys_sents=all_sentences,
+                           refs_sents=[ref_final],
+                           lowercase=True)
     if 'asset' in dataset:
         P, R, F1 = score(all_sentences, list(map(list, zip(*ref_final))), lang = 'pt', verbose = True)
     else:
@@ -126,5 +135,3 @@ if __name__ == '__main__':
     results['bert_score'] = F1.mean()
     results['outputs_unchanged'] = get_outputs_unchanged(all_sentences,src_final)
     print(results)
-
-    wandb.finish()
