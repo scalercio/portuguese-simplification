@@ -5,6 +5,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 # -- end fix path --
 import numpy as np
 import torch
+import json
 torch.set_float32_matmul_precision('medium')
 
 from source.utils import get_evaluate_kwargs, get_outputs_unchanged
@@ -75,7 +76,48 @@ def compare_with_muss(dataset, **config):
     print(f"Generated SARI score confidence intervals: {confidence_intervals}")
     
 def compare_with_gpt(dataset, **config):
-    pass
+    if 'asset' in dataset:
+        raise ValueError("Bootstrap resampling not implemented for Asset dataset")
+    
+    with open(config['evaluate_kwargs']['refs_sents_paths'][0], 'r') as f1, open(config['simplifications_path'], 'r') as f2, open(config['evaluate_kwargs']['orig_sents_path'], 'r') as f3:
+            ref_seq = f1.readlines()
+            simple_seq = f2.readlines()
+            src_seq = f3.readlines()
+
+    if 'museu' in dataset:
+        dataset_string = f'complex.test.{dataset}_'
+    elif 'asset' in dataset:
+        dataset_string = 'complex.test.asset.txt_'
+    else:
+        dataset_string = ''
+        
+    types = ['sintática','anáfora', 'ordem', 'redundante_lexical']
+    gpt_sentences = []
+    ref_final = []
+    src_final = []
+    simple_final = []
+    for tipo_one_shot in types:
+        for i in range(3):
+            ref_final.extend(ref_seq)
+            src_final.extend(src_seq)
+            simple_final.extend(simple_seq)
+            simplified_file = f'data/{dataset}/chatgpt/one_shot_feng/simplified_gpt-3.5-turbo-instruct_fengetal_one_shot_repete_{tipo_one_shot}_{dataset_string}{i+1}.json'
+            
+            print(simplified_file)
+            with open(simplified_file) as f3:
+                data=json.load(f3)
+
+            for sentence_dict in data:
+                #print(sentence_dict['simplified'])
+                gpt_sentences.append(sentence_dict['simplified'])
+    
+    print(len(simple_final))
+    assert len(simple_final) == len(ref_final)
+    assert len(simple_final) == len(src_final)
+    assert len(simple_final) == len(gpt_sentences)
+    
+    confidence_intervals = generate_sari_confidence_intervals(src_final, simple_final, ref_final, gpt_sentences)
+    print(f"Generated SARI score confidence intervals: {confidence_intervals}")       
 
 if __name__ == '__main__':
     """# 1. Prepare Data"""
@@ -88,7 +130,7 @@ if __name__ == '__main__':
 
     testset = True
     dataset = 'museu'
-    baseline = 'muss'
+    baseline = 'gpt'
     config = {
         'evaluate_kwargs': get_evaluate_kwargs("pt",'test') if testset else get_evaluate_kwargs("pt"),
         'simplifications_baseline_path': f'data/{dataset}/muss-test-simplification' if 'muss' in baseline else None,
