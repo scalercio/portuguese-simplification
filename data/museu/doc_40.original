@@ -1,0 +1,16 @@
+C   Giroscópio Humano
+
+R   Ficando para trás na corrida espacial, os Estados Unidos contra-atacaram com o projeto Mercury, entre 1958 e 1963. 
+C   A bordo da espaçonave Mercury-Redstone 3, Alan Shepard foi o primeiro norte-americano a chegar ao espaço, em maio de 1961, apenas um mês após o famoso voo do russo Yuri Gagarin.
+
+S   Com formato cônico e espaço para apenas um tripulante, a Mercury-Redstone 3 realizou um voo de 486 Km em pouco mais de 15 minutos, alcançando a velocidade de 8.340 km/h.
+
+R   Mesmo sem ter ultrapassado a União Soviética na Corrida Espacial, o Projeto Mercury estabeleceu as condições para que, alguns anos depois, o homem chegasse a Lua. 
+R   Como parte do treinamento da equipe do Projeto Mercury, a NASA criou um equipamento chamado de MASTIF (Multiple Axis Space Test Inertia Facility ou Instalação de Eixos Múltiplos para Teste de Inércia no Espaço). 
+R   Com ele, os astronautas preparavam-se para se movimentar em um ambiente sem a ação da força gravitacional terrestre. 
+R   O MASTIF simulava manobras semelhantes a cambalhotas, que podem ser encontradas em voos espaciais. 
+S   Seus três aros de alumínio tubular giravam separadamente ou de forma combinada, simulando os movimentos de inclinação, rotação e guinada que seriam encontrados quando a Mercury estivesse no espaço. 
+
+C   O experimento Giroscópio Humano é uma versão simplificada do MASTIF. 
+C   Faça um teste e sinta-se como um astronauta no espaço. 
+R   Com a Apollo XI, o sonho de chegar à Lua finalmente se torna realidade para a NASA.

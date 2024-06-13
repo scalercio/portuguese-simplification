@@ -1,0 +1,12 @@
+C   O que é empuxo?
+C   Imagine a seguinte situação:	
+S   Mergulhando um objeto em um recipiente cheio d’água, ele será pressionado pela água, mas nem todas as partes do objeto estarão submetidas à mesma pressão.	
+S   A pressão aumenta com a profundidade, ou seja, a parte do objeto que estiver na porção mais profunda do recipiente estará sujeita a uma pressão maior.	
+R   Essa diferença de pressão produz uma força resultante para cima, que recebe o nome de empuxo.	
+R   É o empuxo que faz com que os corpos possam boiar.	
+C   Parece lógico que pedras ou moedas afundem.	
+R   Entretanto, como explicar que corpos muito maiores, como navios e dirigíveis, conseguem boiar, respectivamente, na água e no ar?	
+
+R   Para que um objeto boie, é preciso que ele desloque um volume de fluido grande o suficiente para exercer um empuxo capaz de equilibrar seu peso.	
+
+S   A quantidade de água deslocada por um navio é suficientemente grande para que o empuxo exercido pela água faça com que ele boie, diferentemente do que ocorre com uma moeda, que, embora seja muito mais leve, não desloca água suficiente para ter seu peso equilibrado pelo empuxo.	

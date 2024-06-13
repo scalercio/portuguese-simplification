@@ -1,0 +1,13 @@
+C   Termômetro Gigante
+
+R   A escala °C (Celsius) é utilizada de maneira oficial por quase todos os países do globo.	
+R   A escala °F (Fahrenheit) é utilizada apenas por três países como é o caso dos Estados Unidos da América.	
+R   Já a unidade K (Kelvin) é usada para fins científicos, determinando a valor absoluto de temperatura.	
+
+R   Você saberia dizer qual a temperatura deste ambiente em °C?	
+R   Observe o termômetro.	
+R   A relação entre a temperatura e a dilatação da coluna de álcool (que contém o líquido vermelho) possibilita a medida da temperatura.	
+
+C   E o que isso tem a ver com a sua vida?	
+R   A marcação de temperatura está diretamente relacionada com fenômenos físicos na natureza.	
+R   Por exemplo: sobre condições normais de pressão, a uma temperatura igual a 0° Celsius pode-se observar a mudança de estado físico da água entre líquido e sólido.	

@@ -1,0 +1,10 @@
+C   Transporte pneumático
+	
+R   Esse equipamento deve ser utilizado por duas pessoas.	
+R   Aguarde seu colega se posicionar do outro lado do tubo.	
+R   Aperte o botão.	Um exaustor será ligado no lado oposto do tubo, criando um diferencial de pressão em seu interior.	
+R   Isso faz com que as bolinhas de isopor no interior do tubo se movimentem da região de maior pressão para a de menor pressão.	
+
+C   E o que isso tem a ver com a sua vida?	
+R   Você já foi empurrado por uma lufada de ar em um dia ventoso?	
+S   Partindo do mesmo princípio, as grandes diferenças de pressão no ar em nossa atmosfera são capazes de produzir ventos muito fortes, capazes de empurrar até mesmo edificações.	

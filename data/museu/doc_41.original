@@ -1,0 +1,17 @@
+C   Por que o navio boia e a moeda afunda?
+
+R   Devido ao empuxo. 
+R   Empuxo é uma força que atua sobre os objetos quando estes são submersos em algum fluido, como a água, por exemplo.
+C   O empuxo atua no sentido oposto ao peso. 
+C   Enquanto o peso “puxa” o objeto para baixo, o empuxo “empurra” o objeto para cima.
+
+R   Por ser muito grande, o navio desloca um volume imenso de água. 
+R   Como consequência, sofre um empuxo suficientemente intenso para equilibrar seu peso e fazê-lo boiar.
+C   Já com uma moeda isso não ocorre. 
+R   Quando é submersa, ela desloca um volume muito pequeno de água. 
+C   Assim, o empuxo que age sobre ela não é suficiente para equilibrar seu peso, e ela afunda.
+
+R   Acompanhe a ação do empuxo, seguindo as instruções:
+R   1.	Observe que os dois objetos têm a mesma massa, pois a balança encontra-se em equilíbrio.
+R   2.	Pressione a barra para baixo para fazê-los submergir.
+R   Quanto maior for o volume do objeto imerso, maior será o empuxo que atua sobre ele.

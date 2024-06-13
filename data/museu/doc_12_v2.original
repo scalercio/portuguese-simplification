@@ -1,0 +1,10 @@
+C   O que é um transformador?
+S   Equipamento formado por um núcleo de ferro parcialmente recoberto por dois enrolamentos de fios condutores (geralmente cobre), o transformador tem a função de variar a tensão elétrica nele aplicada.	
+R   Seu funcionamento inicia com a aplicação de uma tensão elétrica em um de seus enrolamentos.	
+R   O fluxo de corrente elétrica em um dos enrolamentos (primário) produz um campo magnético que induz uma tensão elétrica no outro enrolamento (secundário).	
+R   A variação de tensão elétrica entre os dois enrolamentos é proporcional à relação entre o número de voltas de fio condutor nos dois enrolamentos.	
+
+C   E o que isso tem a ver com a sua vida?	
+C   Postes de rua, casas e estações de energia elétrica têm transformadores.	
+R   Eles permitem aumentar e diminuir a tensão elétrica, adequando-a aos mais diversos fins.	
+R   É o que ocorrem por exemplo, para garantir o funcionamento seguro de um eletrodoméstico de 127 volts em uma casa cuja rede elétrica é de 220 volts.	

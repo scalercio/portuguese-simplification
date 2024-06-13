@@ -1,0 +1,13 @@
+C   BATE-BOLA
+
+R   Afaste uma bola das outras e solte-a.	
+R   Durante as colisões, podemos observar perdas de energia entre os objetos.	
+S   Contudo, se essas perdas forem muito pequenas, a energia do movimento (cinética) é contínua, caracterizando a colisão elástica.	
+R   Quando você afastou a primeira bola e a soltou, ela transferiu energia do movimento para as demais até chegar a última.	
+R   A energia transferida pela primeira bola é suficiente para que a última bola se mova.	
+S   Quando você afasta duas bolas, a energia do movimento duplica, provocando o deslocamento de duas bolas.	
+C   E assim por diante.	
+
+C   E o que isso tem a ver com a sua vida?	
+C   Se você já jogou bilhar, você já provocou colisões elásticas.
+R   Basicamente o jogo se define por uma sucessão desse tipo de colisão, transferindo energia entre as bolinhas para derrubá-las nos buracos da mesa.
