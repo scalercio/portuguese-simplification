@@ -26,7 +26,7 @@ def final_sari_for_each_dataset_with_best_sentences(ref_seq, src_seq, best_sente
     final_sari = corpus_sari(
         orig_sents=src_seq,
         sys_sents=best_sentences,
-        refs_sents=[[ref] for ref in ref_seq]
+        refs_sents=[ref_seq]
     )
     print(f"Final SARI score for {dataset}: {final_sari}")
 
@@ -71,7 +71,10 @@ if __name__ == '__main__':
 
             for tipo_one_shot in types:
                 for i in range(3):
-                    simplified_file = f'data/{dataset}/chatgpt/one_shot_feng/simplified_gpt-3.5-turbo-instruct_fengetal_one_shot_repete_{tipo_one_shot}_{dataset}{i+1}.json'
+                    if 'museu' in dataset:
+                        simplified_file = f'data/{dataset}/chatgpt/one_shot_feng/simplified_gpt-3.5-turbo-instruct_fengetal_one_shot_repete_{tipo_one_shot}_complex.test.{dataset}_{i+1}.json'
+                    else:
+                        simplified_file = f'data/{dataset}/chatgpt/one_shot_feng/simplified_gpt-3.5-turbo-instruct_fengetal_one_shot_repete_{tipo_one_shot}_{i+1}.json'
 
                     with open(simplified_file) as f3:
                         data = json.load(f3)
@@ -98,7 +101,7 @@ if __name__ == '__main__':
             best_indices.append(best_index)
 
         output_file = f'data/{dataset}/chatgpt/one_shot_feng/best_sentences_{dataset}.txt'
-        with output_file.open('w') as f_out:
+        with open(output_file, 'w') as f_out:
             for sentence in best_sentences:
                 f_out.write(f"{sentence}\n")
         print(f"Best sentences for {dataset} saved in: {output_file}")
