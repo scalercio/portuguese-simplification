@@ -15,13 +15,21 @@ div_elements = soup.find_all("div", class_="htb-modal-body")
 data = []
 id = 1
 
+def preprocess_text(text):
+    """ Limpa e prepara o texto removendo caracteres especiais e espaços duplos. """
+    text = text.replace('\t', ' ')  # Troca caracteres de tabulação por espaços
+    text = text.replace('\n', ' ')  # Troca quebras de linha por espaços
+    text = text.replace('\u00a0', ' ').replace('\u200b', ' ').replace('\u200c', ' ').replace('\u200d', ' ').replace('–', ' ')
+    text = ' '.join(text.split())   # Remove espaços duplos, triplos, etc
+    return text
+
 for div in div_elements:
-    term = div.find("h3").text.strip()
+    term = preprocess_text(div.find("h3").text.strip())
     p_elements = div.find_all("p")
 
-    definicao_tecnica = p_elements[0].text.strip()
-    definicao_simples = p_elements[1].text.strip()
-    linguagem_simples = p_elements[2].text.strip()
+    definicao_tecnica = preprocess_text(p_elements[0].text.strip())
+    definicao_simples = preprocess_text(p_elements[1].text.strip())
+    linguagem_simples = preprocess_text(p_elements[2].text.strip())
 
     entry1 = {
         "id": id,
