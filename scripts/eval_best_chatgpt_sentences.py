@@ -56,7 +56,7 @@ if __name__ == '__main__':
 
                 for tipo_one_shot in types:
                     for i in range(3):
-                        simplified_file = f'../data/{dataset}/chatgpt/one_shot_feng/simplified_gpt-3.5-turbo-instruct_fengetal_one_shot_repete_{tipo_one_shot}{"_complex.test.museu" if dataset=="museu" else ""}_{i+1}.json'
+                        simplified_file = f'data/{dataset}/chatgpt/one_shot_feng/simplified_gpt-3.5-turbo-instruct_fengetal_one_shot_repete_{tipo_one_shot}{"_complex.test.museu" if dataset=="museu" else ""}_{i+1}.json'
                         with open(simplified_file, 'r') as f3:
                             data = json.load(f3)
 
@@ -81,7 +81,7 @@ if __name__ == '__main__':
                 selected_sentences.append(best_or_worst_sentence)
                 selected_indices.append(best_or_worst_index)
 
-            output_file = f'../data/{dataset}/chatgpt/one_shot_feng/{label}_sentences_{dataset}.txt'
+            output_file = f'data/{dataset}/chatgpt/one_shot_feng/{label}_sentences_{dataset}.txt'
             with open(output_file, 'w') as f_out:
                 for sentence in selected_sentences:
                     f_out.write(f"{sentence}\n")
