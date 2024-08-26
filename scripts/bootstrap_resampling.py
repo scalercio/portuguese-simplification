@@ -37,7 +37,6 @@ def generate_sari_confidence_intervals(original_sentences, simplified_sentences,
         baseline_simplifications = [baseline_seq[i] for i in indices]
 
         sampled_references = [[reference_sentences[i] for i in indices]]
-        #sampled_references = [[reference_sentences[i]] for i in indices]
 
         score = corpus_sari(orig_sents=sampled_originals, sys_sents=sampled_simplifications, refs_sents=sampled_references)
         #print(score)
