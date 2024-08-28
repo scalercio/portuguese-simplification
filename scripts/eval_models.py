@@ -46,7 +46,7 @@ if __name__ == '__main__':
     config = {
         'sent_length': sent_length,
         'batch_size': batch_size,
-        'delta_val': delta_val, # ver onde usa
+        'delta_val': delta_val,
         'lambda_val': lambda_val,
         'rec_val': rec_val,
         'lr': lr,
@@ -54,7 +54,7 @@ if __name__ == '__main__':
         'model_version': model_version,
         'linguistic_features': linguistic_features,
         'testset': testset,
-        'load_ckpt': None#'simplification-pt/4tnl668c/checkpoints/epoch=9-step=90187.ckpt',
+        'load_ckpt': None
     }
 
     tokenizer = T5TokenizerFast.from_pretrained("unicamp-dl/ptt5-large-portuguese-vocab")
