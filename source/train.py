@@ -22,8 +22,8 @@ def run_training(config, features_kwargs, dataset='ccnet'):
     rand_seed = 123
     np.random.seed(rand_seed)
     torch.manual_seed(rand_seed)
-    preprocessor = Preprocessor(features_kwargs)
-    preprocessor.preprocess_dataset(dataset)
+    #preprocessor = Preprocessor(features_kwargs)
+    #preprocessor.preprocess_dataset(dataset)
     #config["dataset"] = dataset
     
     tokenizer = T5TokenizerFast.from_pretrained(config['model_version'])
