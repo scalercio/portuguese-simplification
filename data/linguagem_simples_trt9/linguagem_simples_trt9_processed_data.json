@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1,
+        "original": "É preciso entregar uma manifestação escrita ao próprio punho declarando seu endereço de residência domiciliar.",
+        "simplified": "Você pode entregar uma declaração de residência escrita à mão."
+    },
+    {
+        "id": 2,
+        "original": "A entidade chegou a peticionar contra a operação.",
+        "simplified": "A entidade entrou com uma ação judicial contra a operação."
+    },
+    {
+        "id": 3,
+        "original": "O CNJ enviou a demanda de informações à SECTI.",
+        "simplified": "O Conselho Nacional de Justiça pediu as informações à Secretaria de Tecnologia da Informação."
+    },
+    {
+        "id": 4,
+        "original": "O processo deve ser realizado por alguém que possua expertise no tema.",
+        "simplified": "O processo deve ser realizado por alguém que seja especialista no tema."
+    },
+    {
+        "id": 5,
+        "original": "Este é um direito básico que deve ser garantido a todo cidadão.",
+        "simplified": "É um direito básico que deve ser garantido a toda cidadã e a todo cidadão."
+    },
+    {
+        "id": 6,
+        "original": "Concomitantemente; Outrossim; Subsidiariamente.",
+        "simplified": " Ao mesmo tempo; Também; De forma secundária."
+    },
+    {
+        "id": 7,
+        "original": "Os requerimentos essenciais para a realização da conferência foram entregues pela coordenadora.",
+        "simplified": "A coordenadora entregou os pedidos essenciais para a realização da conferência."
+    },
+    {
+        "id": 8,
+        "original": "Você vai precisar do seu documento de identificação e comprovante de residência.",
+        "simplified": "Você vai precisar de: • documento de identificação • comprovante de residência"
+    }
+]
