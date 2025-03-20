@@ -1,0 +1,507 @@
+[
+    {
+        "id": 1,
+        "original": "Despesa Corrente: são classificadas como Despesas Correntes as destinadas à produção de bens e serviços correntes. Classificam-se em despesas de custeio e transferências correntes.",
+        "simplified": "Despesa Corrente: são os gastos que o governo realiza para manter o funcionamento dos serviços públicos."
+    },
+    {
+        "id": 2,
+        "original": "Contribuições Sociais: são destinadas ao custeio da seguridade social, para assegurar os direitos relativos à saúde, à previdência e à assistência social.",
+        "simplified": "Contribuições Sociais: são pagamentos feitos por cidadãos e empresas ao governo para financiar benefícios sociais, como seguridade e saúde."
+    },
+    {
+        "id": 3,
+        "original": "Consulta Pública: é um mecanismo de participação social, de caráter consultivo, realizado com prazo definido e aberto a qualquer interessado, com o objetivo de receber contribuições sobre determinado assunto.",
+        "simplified": "Consulta Pública: é quando o governo solicita contribuições da população sobre um assunto específico antes de tomar uma decisão ou elaborar políticas públicas."
+    },
+    {
+        "id": 4,
+        "original": "Orçamento Público: orçamento é um processo de planejamento contínuo e dinâmico de que o Estado se utiliza para demonstrar seus planos e programas de trabalho, para determinado período.",
+        "simplified": "Orçamento Público: é um plano financeiro que detalha como o governo vai arrecadar e gastar dinheiro para cumprir suas funções e serviços durante um período determinado."
+    },
+    {
+        "id": 5,
+        "original": "Balanço Orçamentário: demonstração contábil do setor público que compara as receitas e despesas previstas em confronto com as realizadas.",
+        "simplified": "Balanço Orçamentário: é um relatório que compara o que foi planejado financeiramente com o que foi realizado."
+    },
+    {
+        "id": 6,
+        "original": "Renúncia de Receita: A renúncia compreende anistia, remissão, subsídio, crédito presumido, concessão de isenção em caráter não geral, alteração de alíquota ou modificação de base de cálculo que implique redução discriminada de tributos ou contribuições, e outros benefícios que correspondam a tratamento diferenciado.",
+        "simplified": "Renúncia de Receita: é quando o governo perdoa dívidas, dá descontos, oferece auxílios, aplica isenções específicas, reduz taxas de impostos, ou qualquer outro benefício que trate alguns casos de forma especial."
+    },
+    {
+        "id": 7,
+        "original": "Despesa de Capital: despesas de capital são as que contribuem para a formação ou aquisição de bens de capital e de produtos para revenda; a concessão de empréstimos; e a amortização de dívidas.",
+        "simplified": "Despesa de Capital: são gastos destinados à compra ou construção de bens duráveis, como prédios e equipamentos, empréstimos concedidos a outros e pagamento de dívidas."
+    },
+    {
+        "id": 8,
+        "original": "Operação de Crédito: compromisso financeiro assumido em razão de mútuo, abertura de crédito, emissão e aceite de título, aquisição financiada de bens, recebimento antecipado de valores provenientes da venda a termo de bens e serviços, arrendamento mercantil e outras operações assemelhadas, inclusive com o uso de derivativos financeiros.",
+        "simplified": "Operação de Crédito: é quando o governo faz empréstimos, oferece linhas de crédito, emite títulos, financia compras, recebe adiantamentos de vendas futuras ou faz arrendamentos."
+    },
+    {
+        "id": 9,
+        "original": "Dívida Pública ou Fundada: montante total, apurado sem duplicidade, das obrigações financeiras do ente da Federação, assumidas em virtude de leis, contratos, convênios ou tratados e da realização de operações de crédito, para amortização em prazo superior a doze meses.",
+        "simplified": "Dívida Pública ou Fundada: é o valor total que o governo deve aos seus credores, por empréstimo e emissão de títulos, com vencimentos a partir de doze meses."
+    },
+    {
+        "id": 10,
+        "original": "Plano Plurianual - PPA: o plano plurianual estabelece, de forma regionalizada, as diretrizes, objetivos e metas da administração pública federal para as despesas de capital e outras delas decorrentes e para as relativas aos programas de duração continuada.",
+        "simplified": "Plano Plurianual - PPA: é um planejamento que define, de maneira organizada por regiões, as metas, objetivos e diretrizes do governo para gastos com investimentos e programas de longo prazo."
+    },
+    {
+        "id": 11,
+        "original": "Lei de Diretrizes Orçamentárias - LDO: a lei de diretrizes orçamentárias compreenderá as metas e prioridades da administração pública federal, estabelecerá as diretrizes de política fiscal e respectivas metas, em consonância com trajetória sustentável da dívida pública, orientará a elaboração da lei orçamentária anual, disporá sobre as alterações na legislação tributária e estabelecerá a política de aplicação das agências financeiras oficiais de fomento.",
+        "simplified": "Lei de Diretrizes Orçamentárias - LDO: define metas e prioridades do governo, políticas fiscais, orienta o orçamento anual, regras de gastos, impostos e financiamentos para projetos públicos."
+    },
+    {
+        "id": 12,
+        "original": "Lei Orçamentária Anual - LOA: a lei orçamentária anual compreende o orçamento fiscal, o orçamento de investimento das empresas e o orçamento da seguridade social. A lei orçamentária anual estima a receita e fixa a despesa para o exercício financeiro.",
+        "simplified": "Lei Orçamentária Anual - LOA: é uma lei que prevê quanto dinheiro o governo vai receber e como vai gastá-lo durante o ano."
+    },
+    {
+        "id": 13,
+        "original": "Receitas Correntes: são as receitas tributária, de contribuições, patrimonial, agropecuária, industrial, de serviços e outras e, ainda, as provenientes de recursos financeiros recebidos de outras pessoas de direito público ou privado, quando destinadas a atender despesas classificáveis em Despesas Correntes.",
+        "simplified": "Receitas Correntes: é o dinheiro que o governo recebe de impostos, contribuições, rendimentos de propriedades, agrícolas, industriais, serviços e outros recursos financeiros de entidades públicas ou privadas."
+    },
+    {
+        "id": 14,
+        "original": "Receitas de Contribuição: são valores arrecadados pelo governo provenientes de contribuições compulsórias pagas por indivíduos ou empresas para financiar a seguridade social ou outros fins específicos determinados por lei.",
+        "simplified": "Receitas de Contribuição: é dinheiro que o governo recebe de contribuições obrigatórias pagas por pessoas ou empresas para financiar a previdência e a assistência social."
+    },
+    {
+        "id": 15,
+        "original": "Receitas Imobiliárias: receitas provenientes da exploração do patrimônio imobiliário e da alienação de bens Imóveis do governo.",
+        "simplified": "Receitas Imobiliárias: é o dinheiro que o governo recebe de aluguel ou venda de suas propriedades."
+    },
+    {
+        "id": 16,
+        "original": "Audiência Pública: instrumento de transparência da gestão fiscal e incentivo à participação popular durante os processos de elaboração e discussão dos planos, lei de diretrizes orçamentárias e orçamentos.",
+        "simplified": "Audiência Pública: é quando o governo organiza um momento para mostrar como gastou o dinheiro e incentivar as pessoas a participarem na criação e discussão dos planos e orçamentos."
+    },
+    {
+        "id": 17,
+        "original": "Receita Patrimonial: receitas provenientes da fruição de patrimônio pertencente ao ente público, tais como as decorrentes de aluguéis, dividendos, compensações financeiras/royalties, concessões, entre outras.",
+        "simplified": "Receita Patrimonial: são valores que vêm do uso de bens que pertencem ao governo, como aluguéis, dividendos, autorização de exploração de serviços públicos e de recursos naturais."
+    },
+    {
+        "id": 18,
+        "original": "Receitas de Valores Mobiliários: receitas decorrentes de valores mobiliários, como juros e correções monetárias de aplicações do ente público, de remuneração de depósitos bancários, de depósitos especiais, de saldos de recursos não desembolsados, juros de títulos de renda e sobre o capital próprio",
+        "simplified": "Receitas de Valores Mobiliários: são os ganhos obtidos pelo governo com juros de depósitos bancários, investimentos em ações, títulos e outros instrumentos financeiros negociáveis."
+    },
+    {
+        "id": 19,
+        "original": "Receita de Concessões e Permissões: registra o valor da arrecadação de receitas originadas da concessão ou permissão ao particular do direito de exploração de serviços públicos, os quais estão sujeitos ao controle, fiscalização e regulação do poder público.",
+        "simplified": "Receita de Concessões e Permissões: é o dinheiro que o governo recebe quando autoriza empresas privadas a explorarem recursos públicos ou prestar serviços à população."
+    },
+    {
+        "id": 20,
+        "original": "Receitas Tributárias: são os ingressos provenientes da arrecadação de impostos, taxas e contribuições de melhoria. É receita privativa das entidades investidas do poder de tributar: União, Estados, Distrito Federal e Municípios.",
+        "simplified": "Receitas Tributárias: são valores que o governo recebe dos pagamentos de impostos, taxas e contribuições."
+    },
+    {
+        "id": 21,
+        "original": "Receitas Agropecuárias: são os ingressos provenientes da atividade ou da exploração agropecuária de origem vegetal ou animal.",
+        "simplified": "Receitas Agropecuárias: são os valores arrecadados pelo governo com atividades relacionadas à agricultura e pecuária."
+    },
+    {
+        "id": 22,
+        "original": "Imposto sobre Operações relativas à Circulação de Mercadorias e sobre Prestações de Serviços de Transporte: ICMS é um imposto de competência dos Estados e do Distrito Federal que incide sobre as operações relativas à circulação de mercadorias e sobre prestações de serviços de transporte interestadual e intermunicipal e de comunicação, ainda que as operações e as prestações se iniciem no exterior.",
+        "simplified": "Imposto sobre Operações relativas à Circulação de Mercadorias e sobre Prestações de Serviços de Transporte: é um imposto que precisa ser pago quando há compra e venda de mercadorias, transporte de pessoas ou bens entre estados ou municípios, e na prestação paga de serviços de comunicação. Isso inclui casos em que as transações têm início no exterior."
+    },
+    {
+        "id": 23,
+        "original": "Base de Cálculo do ICMS: é o valor da operação no momento da saída da mercadoria ou o preço do serviço, nas hipóteses de comunicação, transporte interestadual e transporte intermunicipal.",
+        "simplified": "Base de Cálculo do ICMS: é o valor da mercadoria ou o preço do serviço, nos casos de comunicação, transporte entre estados e transporte entre municípios."
+    },
+    {
+        "id": 24,
+        "original": "Lançamento: é o procedimento administrativo tendente a verificar a ocorrência do fato gerador da obrigação correspondente, determinar a matéria tributável, calcular o montante do tributo devido, identificar o sujeito passivo e, sendo caso, propor a aplicação da penalidade cabível.",
+        "simplified": "Lançamento: é o procedimento para verificar se ocorreu o evento que causa a obrigação de pagar um tributo, para calcular o valor a ser pago, identificar quem deve pagar e, se necessário, aplicar multa."
+    },
+    {
+        "id": 25,
+        "original": "Contribuinte: é qualquer pessoa, física ou jurídica, que realize, com habitualidade ou em volume que caracterize intuito comercial, operações de circulação de mercadoria ou prestações de serviços de transporte interestadual e intermunicipal e de comunicação, ainda que as operações e as prestações se iniciem no exterior.",
+        "simplified": "Contribuinte: é quem vende produtos regularmente ou em quantidade que indique intenção comercial, ou presta serviços de transporte e comunicação, incluindo os iniciados em outros países."
+    },
+    {
+        "id": 26,
+        "original": "Responsável Tributário: é quando a lei atribui de modo expresso a responsabilidade pelo crédito tributário a terceira pessoa, vinculada ao fato gerador da respectiva obrigação, excluindo a responsabilidade do contribuinte ou atribuindo-a a este em caráter supletivo do cumprimento total ou parcial da referida obrigação.",
+        "simplified": "Responsável Tributário: é quando a lei determina que outra pessoa ligada ao fato gerador do tributo faça o pagamento, excluindo o contribuinte ou responsabilizando-o se necessário."
+    },
+    {
+        "id": 27,
+        "original": "Responsável Solidário: são as pessoas que tenham interesse comum na situação que constitua o fato gerador da obrigação principal ou as pessoas expressamente designadas por lei.",
+        "simplified": "Responsável Solidário: são as pessoas que tem um interesse comum na situação que cria um tributo ou são indicadas por lei para serem responsáveis por ele."
+    },
+    {
+        "id": 28,
+        "original": "Substituto Tributário: é substituição de imputação de responsabilidade por obrigação tributária de terceiro que não praticou o fato gerador, mas que tem vinculação indireta com o real contribuinte.",
+        "simplified": "Substituto Tributário: é quando uma pessoa que não causou diretamente o evento tributável é responsabilizada pelo tributo devido à sua ligação indireta com o verdadeiro contribuinte."
+    },
+    {
+        "id": 29,
+        "original": "Benefícios Fiscais: é um regime especial de tributação que envolve uma vantagem ou simplesmente um desagravamento fiscal perante o regime normal, assumindo-se como uma forma de definição de isenção, redução de base de cálculo, crédito presumido, redução de taxas, deduções à matéria coletável, amortizações e/ou outras medidas fiscais dessa natureza.",
+        "simplified": "Benefícios Fiscais: são regras especiais que oferecem vantagens ou reduções de impostos comparadas aos tributos cobrados normalmente."
+    },
+    {
+        "id": 30,
+        "original": "Prestação de Serviços: prestação de serviço é o oferecimento de uma utilidade para outrem, a partir de um conjunto de atividades materiais ou imateriais, prestadas com habitualidade e intuito de lucro, podendo estar conjugada ou não com a entrega de bens ao tomador.",
+        "simplified": "Prestação de Serviços: é quando uma pessoa ou empresa presta um serviço, com entrega ou não bens, e recebe um pagamento por isso."
+    },
+    {
+        "id": 31,
+        "original": "Prestador de Serviços: prestador de serviços é o contribuinte que exerce determinadas atividades ou serviços que envolva fornecimento de mercadorias sujeitas à incidência do imposto sobre operações relativas à circulação de mercadorias e sobre prestações de serviços de transporte interestadual e intermunicipal e de comunicação.",
+        "simplified": "Prestador de Serviços: é quem realiza certas atividades ou serviços que incluem o fornecimento de produtos sujeitos ao imposto."
+    },
+    {
+        "id": 32,
+        "original": "Tomador de Serviços: tomador de serviços é a pessoa física ou jurídica que contrata os serviços de outra pessoa física ou jurídica, chamada de prestador de serviços, para realizar uma determinada atividade.",
+        "simplified": "Tomador de Serviços: é quem contrata uma pessoa ou empresa prestadora de serviços para fazer um trabalho específico."
+    },
+    {
+        "id": 33,
+        "original": "Profissional Autônomo: o que exerce habitualmente, e por conta própria, atividade profissional remunerada; o que presta, sem relação de emprego, serviço de caráter eventual a uma ou mais empresas.",
+        "simplified": "Profissional Autônomo: é quem trabalha por conta própria e oferece serviços a uma ou várias empresas sem estar formalmente empregado por elas."
+    },
+    {
+        "id": 34,
+        "original": "Simples Nacional: o Simples Nacional é um regime compartilhado de arrecadação, cobrança e fiscalização de tributos aplicável às Microempresas e Empresas de Pequeno Porte, previsto na Lei Complementar nº 123, de 14 de dezembro de 2006.",
+        "simplified": "Simples Nacional: é uma opção mais fácil para pequenas empresas pagarem tributos, porque junta vários impostos em um único boleto."
+    },
+    {
+        "id": 35,
+        "original": "Microempreendedor Individual (MEI): é o empresário individual ou o empreendedor, que exerça, de forma independente e exclusiva, apenas as ocupações previstas em norma específica, que seja optante pelo Simples Nacional e que atenda o limite de receita bruta anual definido na Lei Complementar 123 de 2006.",
+        "simplified": "Microempreendedor Individual (MEI): é alguém que trabalha por conta própria em atividades autorizadas pelo governo e paga impostos de maneira simplificada, desde que não ultrapasse o limite anual de ganhos estabelecido por lei."
+    },
+    {
+        "id": 36,
+        "original": "Arrendamento Mercantil: negócio jurídico realizado entre pessoa jurídica, na qualidade de arrendadora, e pessoa física ou jurídica, na qualidade de arrendatária, e que tenha por objeto o arrendamento de bens adquiridos pela arrendadora, segundo especificações da arrendatária e para uso próprio desta.",
+        "simplified": "Arrendamento Mercantil: é um negócio no qual uma empresa aluga bens com regras específicas para atender a necessidade de outras pessoas."
+    },
+    {
+        "id": 37,
+        "original": "Termo de Apreensão e Depósito: instrumento destinados a documentar as ocorrências verificadas pelo serviço de fiscalização de trânsito de bens, de mercadorias e das respectivas prestações de serviço de transporte interestadual e intermunicipal, inclusive, quando for o caso, a constituição do crédito tributário pertinente",
+        "simplified": "Termo de Apreensão e Depósito: é um documento utilizado por quem fiscaliza o transporte de mercadorias entre cidades e estados para registrar o não cumprimento das regras."
+    },
+    {
+        "id": 38,
+        "original": "Programa Nota MT: programa do Estado que tem por objetivo incentivar o exercício da cidadania fiscal, mediante a adoção de medidas que estimulem a formação do hábito no consumidor de, quando adquirir bens e mercadorias, exigir do fornecedor a emissão do documento fiscal hábil.",
+        "simplified": "Programa Nota MT: é um programa do governo que incentiva a cidadania fiscal, promovendo o hábitos de pedir o comprovante fiscal ao comprar bens e mercadorias."
+    },
+    {
+        "id": 39,
+        "original": "Administração Pública: é o conjunto de órgãos instituídos para consecução dos objetivos do governo em sentido material, é o conjunto das funções necessárias aos serviços públicos em geral; em acepção operacional, é o desempenho perene e sistemático, legal e técnico, dos serviços próprios do Estado ou por ele assumidos em benefício da coletividade.",
+        "simplified": "Administração Pública: são os órgãos públicos e instituições do Estado e que têm a responsabilidade de gerir os recursos públicos e oferecer serviços à população."
+    },
+    {
+        "id": 40,
+        "original": "Órgão Público: são centros de competência instituídos para o desempenho de funções estatais, através de seus agentes, cuja atuação é imputada à pessoa jurídica a que pertencem.",
+        "simplified": "Órgão Público: é uma unidade administrativa do governo que é responsável por cuidar de um determinado assunto, como por exemplo saúde, educação, segurança e transporte."
+    },
+    {
+        "id": 41,
+        "original": "Agente Público: indivíduo que, em virtude de eleição, nomeação, designação, contratação ou qualquer outra forma de investidura ou vínculo, exerce mandato, cargo, emprego ou função em pessoa jurídica integrante da Administração Pública.",
+        "simplified": "Agente Público: pessoa que trabalha para o governo em um cargo, emprego ou função da administração pública."
+    },
+    {
+        "id": 42,
+        "original": "Contratante: pessoa jurídica integrante da Administração Pública responsável pela contratação.",
+        "simplified": "Contratante: órgão ou instituição do Estado que contrata pessoas ou empresas."
+    },
+    {
+        "id": 43,
+        "original": "Contratado: pessoa física ou jurídica, ou consórcio de pessoas jurídicas, signatária de contrato com a Administração.",
+        "simplified": "Contratado: é a pessoa ou empresa contratada para fornecer produtos ou serviços ao Estado."
+    },
+    {
+        "id": 44,
+        "original": "Autoridade: agente público dotado de poder de decisão.",
+        "simplified": "Autoridade: é a pessoa que trabalha no governo e tem o poder na tomada de decisões."
+    },
+    {
+        "id": 45,
+        "original": "Licitação: procedimento administrativo pelo qual entidades governamentais convocam interessados em fornecer bens ou serviços, assim como locar ou adquirir bens públicos, estabelecendo uma competição a fim de celebrar contrato com quem oferecer a melhor proposta.",
+        "simplified": "Licitação: é quando o governo estabelece uma competição entre os interessados em fornecer produtos ou serviços e ao final contrata aquele que oferecer a melhor proposta."
+    },
+    {
+        "id": 46,
+        "original": "Leilão: modalidade de licitação para alienação de bens imóveis ou de bens móveis inservíveis ou legalmente apreendidos a quem oferecer o maior lance.",
+        "simplified": "Leilão: é uma forma de venda de bens móveis ou imóveis, por competição entre os interessados por meio de lances e quem oferecer o maior lance leva o bem."
+    },
+    {
+        "id": 47,
+        "original": "Contrato Administrativo: ajuste que a Administração, nessa qualidade, celebra com pessoas físicas ou jurídicas, públicas ou privadas, para a consecução de fins públicos, segundo regime jurídico de direito público.",
+        "simplified": "Contrato Administrativo: é um acordo que o governo faz com pessoas ou empresas, públicas ou privadas, para alcançar objetivos públicos, seguindo regras de direito público."
+    },
+    {
+        "id": 48,
+        "original": "Imposto Sobre a Propriedade de Veículos Automotores: é um imposto de competência dos Estados que incide anualmente sobre a propriedade de veículos automotores sujeitos a registro, matrícula ou licenciamento perante as autoridades competentes.",
+        "simplified": "Imposto Sobre a Propriedade de Veículos Automotores: é um imposto estadual cobrado todos os anos sobre a propriedade de veículos automotores."
+    },
+    {
+        "id": 49,
+        "original": "Responsabilidade Pessoal: é pessoalmente responsável pelo pagamento do imposto o adquirente ou o remitente do veículo, em relação a fato gerador anterior ao tempo de sua aquisição.",
+        "simplified": "Responsabilidade Pessoal: o comprador ou o vendedor do veículo é responsável pelo pagamento do imposto gerado antes da compra."
+    },
+    {
+        "id": 50,
+        "original": "Repartição da Receita do IPVA: pertencem aos Municípios 50% (cinquenta por cento) do produto da arrecadação do imposto do Estado sobre a propriedade de veículos automotores licenciados em seus territórios e, em relação a veículos aquáticos e aéreos, cujos proprietários sejam domiciliados em seus territórios.",
+        "simplified": "Repartição da Receita do IPVA: metade do dinheiro arrecadado com o imposto sobre os veículos registrados nos municípios vai para os próprios municípios."
+    },
+    {
+        "id": 51,
+        "original": "Valor Venal: os valores médios de mercado, expressos em Real (R$), dos veículos automotores, por tipo, marca, modelo e ano de fabricação, que servirão para a apuração da base de cálculo do Imposto sobre a Propriedade de Veículos Automotores - IPVA.",
+        "simplified": "Valor Venal: os preços médios de mercado dos veículos automotores, considerando tipo, marca, modelo e ano, são utilizados para calcular o imposto. Esse valor é definido pelo governo estadual usando tabelas de referência, como a tabela da Fundação Instituto de Pesquisas Econômicas (FIPE)."
+    },
+    {
+        "id": 52,
+        "original": "Não Incidência (Imunidade) do IPVA: é vedado à União, aos Estados, ao Distrito Federal e aos Municípios instituir impostos sobre o patrimônio, renda ou serviços, uns dos outros; entidades religiosas e templos de qualquer culto, inclusive suas organizações assistenciais e beneficentes; dos partidos políticos, das entidades sindicais dos trabalhadores, das instituições de educação e de assistência social, sem fins lucrativos, atendidos os requisitos da lei.",
+        "simplified": "Não Incidência (Imunidade) do IPVA: os governos não podem cobrar impostos entre si, nem sobre entidades religiosas, templos, partidos políticos, sindicatos, e instituições educacionais e assistenciais sem fins lucrativos."
+    },
+    {
+        "id": 53,
+        "original": "Baixa de Imunidade: é o procedimento administrativo que cancela a imunidade quando da ocorrência de evento que determine a perda do benefício, uma vez cessado o motivo ou a condição que lhe deu causa.",
+        "simplified": "Baixa de Imunidade: é o processo que cancela o benefício quando ocorre um evento que justifica a sua perda."
+    },
+    {
+        "id": 54,
+        "original": "Isenção do IPVA: é a dispensa legal do pagamento do tributo. É sempre decorrente de lei que especifique as condições e requisitos exigidos para a sua concessão, os tributos a que se aplica e, sendo caso, o prazo de sua duração.",
+        "simplified": "Isenção do IPVA: é quando a lei desobriga em certos casos o pagamento do imposto sobre a propriedade do veículo."
+    },
+    {
+        "id": 55,
+        "original": "Baixa de Isenção: a baixa de isenção é o procedimento pelo qual o benefício de isenção do IPVA é encerrado devido ao término ou mudança das condições que justificaram a concessão do benefício.",
+        "simplified": "Baixa de Isenção: é quando a isenção é cancelada porque as condições que a permitiam não não existem mais."
+    },
+    {
+        "id": 56,
+        "original": "Comunicado de Venda: o comunicado de venda é a averbação no órgão de trânsito da alienação do veículo.",
+        "simplified": "Comunicado de Venda: é uma comunicação feita ao Departamento Estadual de Trânsito (Detran) de que o veículo foi vendido."
+    },
+    {
+        "id": 57,
+        "original": "Nota MT - Desconto IPVA: benefício do Programa Nota MT para os proprietários de veículos mato-grossenses que participam do Programa Nota MT e pedem o CPF na nota podem ter desconto no Imposto sobre a Propriedade de Veículos Automotores (IPVA).",
+        "simplified": "Nota MT - Desconto IPVA: desconto no valor do Imposto sobre a Propriedade de Veículos Automotores - IPVA aos cidadãos que solicitam a emissão de notas fiscais no estado de Mato Grosso."
+    },
+    {
+        "id": 58,
+        "original": "Suspensão do IPVA: são causas que interrompem temporariamente o direito de cobrar o devedor.",
+        "simplified": "Suspensão do IPVA: são motivos que param temporariamente a cobrança do imposto sobre o veículo."
+    },
+    {
+        "id": 59,
+        "original": "Restituição - IPVA: o sujeito passivo tem direito à restituição total ou parcial do imposto nas hipóteses de pagamento indevido ou maior do que o devido.",
+        "simplified": "Restituição - IPVA: a pessoa tem direito de receber de volta parte ou todo o imposto pago incorretamente ou a mais que o devido."
+    },
+    {
+        "id": 60,
+        "original": "Compensação do IPVA: as importâncias recolhidas a maior ou em duplicidade a título de IPVA, referente a determinado veículo, serão compensadas, automaticamente, com o imposto devido pelo sujeito passivo, em relação ao mesmo veículo, nos exercícios seguintes, até a extinção do excesso.",
+        "simplified": "Compensação do IPVA: se você pagar a mais ou duas vezes o imposto de um veículo, esse valor será devolvido para reduzir o imposto desse veículo no ano seguinte."
+    },
+    {
+        "id": 61,
+        "original": "Tributo: é toda prestação pecuniária compulsória, em moeda ou cujo valor nela se possa exprimir, que não constitua sanção de ato ilícito, instituída em lei e cobrada mediante atividade administrativa plenamente vinculada.",
+        "simplified": "Tributo: é uma obrigação de pagamento ao governo autorizada por lei, que é cobrado por meio de atividade administrativa."
+    },
+    {
+        "id": 62,
+        "original": "Base de Cálculo: é expressão econômica de um fato jurídico, ou seja, algo que representa o quantum que servirá de referência para o pagamento do tributo.",
+        "simplified": "Base de Cálculo: é o valor de referência usado para calcular o imposto. Cada tipo de tributo pode ter uma base de cálculo diferente, dependendo das regras específicas."
+    },
+    {
+        "id": 63,
+        "original": "Fato Gerador: fato gerador da obrigação principal é a situação definida em lei como necessária e suficiente à sua ocorrência. Fato gerador da obrigação acessória é qualquer situação que, na forma da legislação aplicável, impõe a prática ou a abstenção de ato que não configure obrigação principal.",
+        "simplified": "Fato Gerador: é a situação ou fato que gera a obrigação de pagar um tributo ou de cumprir uma obrigação ao governo."
+    },
+    {
+        "id": 64,
+        "original": "Contribuição de Melhoria: tributo que pode ser instituído para fazer face ao custo de obras públicas de que decorra valorização imobiliária, tendo como limite total a despesa realizada e como limite individual o acréscimo de valor que da obra resultar para cada imóvel beneficiado.",
+        "simplified": "Contribuição de Melhoria: valor cobrado do proprietário que tem seu imóvel valorizado pela realização de uma obra pública."
+    },
+    {
+        "id": 65,
+        "original": "Alíquota: é o percentual aplicado sobre a base de cálculo de um tributo para determinar o valor a ser pago. Cada tributo possui alíquotas específicas, estabelecidas por lei, que podem variar de acordo com o tipo de bem, serviço ou situação em que o tributo incida.",
+        "simplified": "Alíquota: é uma porcentagem que se aplica sobre a base de cálculo de um tributo para determinar o valor do imposto a ser pago."
+    },
+    {
+        "id": 66,
+        "original": "Imunidade: as imunidades são limitações constitucionais ao poder de tributar consistentes na delimitação da competência tributária constitucionalmente conferida aos entes políticos.",
+        "simplified": "Imunidade: é uma proteção que algumas pessoas ou entidades têm para não pagar certos tipos de impostos."
+    },
+    {
+        "id": 67,
+        "original": "Imposto: imposto é o tributo cuja obrigação tem por fato gerador uma situação independente de qualquer atividade estatal específica, relativa ao contribuinte.",
+        "simplified": "Imposto: são pagamentos que você precisa fazer quando ocorre uma situação específica definida pela lei."
+    },
+    {
+        "id": 68,
+        "original": "Taxas: a União, os Estados, o Distrito Federal e os Municípios poderão instituir taxas, em razão do exercício do poder de polícia ou pela utilização, efetiva ou potencial, de serviços públicos específicos e divisíveis, prestados ao contribuinte ou postos a sua disposição.",
+        "simplified": "Taxas: são valores cobrados pelos governos pela fiscalização ou pela prestação de serviços públicos que podem ser utilizados pelos cidadãos."
+    },
+    {
+        "id": 69,
+        "original": "Obrigação Tributária Principal: a obrigação tributária principal surge com a ocorrência do fato gerador, tem por objeto o pagamento de tributo ou penalidade pecuniária e extingue-se juntamente com o crédito dela decorrente.",
+        "simplified": "Obrigação Tributária Principal: é o dever que as pessoas físicas e jurídicas têm de pagar um determinado tributo quando ocorre um evento ou situação."
+    },
+    {
+        "id": 70,
+        "original": "Obrigação Tributária Acessória: a obrigação acessória decorre da legislação tributária e tem por objeto as prestações, positivas ou negativas, nela previstas no interesse da arrecadação ou da fiscalização dos tributos, que pelo simples fato da sua inobservância, converte-se em obrigação principal relativamente à penalidade pecuniária.",
+        "simplified": "Obrigação Tributária Acessória: são tarefas que você precisa realizar para ajudar o governo a arrecadar impostos."
+    },
+    {
+        "id": 71,
+        "original": "Solidariedade: há solidariedade quando na mesma obrigação concorre mais de um credor, ou mais de um devedor, cada um com direito, ou obrigado, à dívida toda.",
+        "simplified": "Solidariedade: é quando duas ou mais pessoas são responsáveis pelo pagamento de um mesmo tributo."
+    },
+    {
+        "id": 72,
+        "original": "Isenção: a isenção consiste na dispensa legal do pagamento do tributo. Assim, o ente político tem competência para instituir o tributo e, ao fazê-lo, opta por dispensar o pagamento em determinadas situações.",
+        "simplified": "Isenção: é quando o governo decide não cobrar um imposto de alguns produtos, serviços, pessoas ou situações."
+    },
+    {
+        "id": 73,
+        "original": "Crédito Tributário: o crédito tributário decorre da obrigação principal e tem a mesma natureza desta. É constituído pelo lançamento e consiste na obrigação tributária exigível, passível de cobrança.",
+        "simplified": "Crédito Tributário: são créditos que o governo tem quando pessoas físicas ou jurídicas devem um determinado tributo."
+    },
+    {
+        "id": 74,
+        "original": "Não Incidência: a não incidência ocorre sempre que não for possível enquadrar, de acordo com a legislação, determinada situação como passível de tributação ou quando a lei a determinar expressamente.",
+        "simplified": "Não Incidência: é quando não há lei que determine a cobrança de um imposto ou quando o governo é proibido de cobrá-lo."
+    },
+    {
+        "id": 75,
+        "original": "Redução da Base de Cálculo: é um benefício fiscal concedido pelo fisco, mediante lei específica, que tem como principal objetivo reduzir a tributação sobre determinadas mercadorias ou operações.",
+        "simplified": "Redução da Base de Cálculo: é quando o governo diminui o valor que serve como base para o cálculo do tributo sobre mercadorias ou operações e bens ou serviços específicos."
+    },
+    {
+        "id": 76,
+        "original": "Dívida Ativa: constitui dívida ativa tributária a proveniente de crédito dessa natureza, regularmente inscrita na repartição administrativa competente, depois de esgotado o prazo fixado, para pagamento, pela lei ou por decisão final proferida em processo regular.",
+        "simplified": "Dívida Ativa: é o dinheiro que o governo tem para receber de tributos que não foram pagos no prazo estipulado pela lei."
+    },
+    {
+        "id": 77,
+        "original": "Protesto de Dívida: é o ato formal e solene pelo qual se prova a inadimplência e o descumprimento de obrigação originada em títulos e outros documentos de dívida. Incluem-se entre os títulos sujeitos a protesto as certidões de dívida ativa da União, dos Estados, do Distrito Federal, dos Municípios e das respectivas autarquias e fundações públicas.",
+        "simplified": "Protesto de Dívida: é um registro que comprova a falta de pagamento de dívidas."
+    },
+    {
+        "id": 78,
+        "original": "Consulta Tributária: todo aquele que tiver legítimo interesse poderá formular consulta sobre interpretação e aplicação da legislação tributária estadual.",
+        "simplified": "Consulta Tributária: é um processo em que contribuintes pedem esclarecimentos sobre questões fiscais junto à administração tributária estadual."
+    },
+    {
+        "id": 79,
+        "original": "Imposto Sobre Transmissão Causa Mortis e Doação de Quaisquer Bens ou Direito: é o imposto que incide sobre a transmissão de qualquer bem ou direito recebido por sucessão legítima ou testamentária, inclusive a sucessão provisória, e por doação a qualquer título.",
+        "simplified": "Imposto Sobre Transmissão Causa Mortis e Doação de Quaisquer Bens ou Direito: é um imposto estadual pago por quem recebe herança ou doação de um bem ou de um direito."
+    },
+    {
+        "id": 80,
+        "original": "Fato Gerador do ITCD: ocorre o fato gerador: I - na transmissão de qualquer bem ou direito havido por sucessão legítima ou testamentária, inclusive a sucessão provisória; II - na transmissão por doação, a qualquer título, de quaisquer bens ou direitos; III - na aquisição de bem ou direito em excesso pelo herdeiro ou cônjuge meeiro, na partilha, em sucessão causa mortis ou em dissolução de sociedade conjugal.",
+        "simplified": "Fato Gerador do ITCD: ocorre em três situações: quando uma pessoa morre e deixa bens; quando alguém doa algo a outra pessoa; quando o cônjuge ou herdeiro recebe mais bens do que de direito."
+    },
+    {
+        "id": 81,
+        "original": "Sujeito Ativo do ITCD: sujeito ativo da obrigação é a pessoa jurídica de direito público, titular da competência para exigir o seu cumprimento.",
+        "simplified": "Sujeito Ativo do ITCD: é o Governo do Estado que é autorizado por lei para cobrar este imposto."
+    },
+    {
+        "id": 82,
+        "original": "Sujeito Passivo do ITCD: sujeito passivo da obrigação principal é a pessoa obrigada ao pagamento de tributo ou penalidade pecuniária.",
+        "simplified": "Sujeito Passivo do ITCD: é a pessoa que tem a obrigação legal de pagar o imposto."
+    },
+    {
+        "id": 83,
+        "original": "Herança: herança é o patrimônio do de cujus, o conjunto de direitos e obrigações que se transmitem aos herdeiros.",
+        "simplified": "Herança: são os bens deixados pela pessoa que morreu."
+    },
+    {
+        "id": 84,
+        "original": "Sucessão Legítima: aquela que decorre da lei, que enuncia a ordem de vocação hereditária, presumindo a vontade do autor da herança.",
+        "simplified": "Sucessão Legítima: é a herança distribuída de acordo com uma ordem determinada pela lei."
+    },
+    {
+        "id": 85,
+        "original": "Sucessão Testamentária: tem por origem ato de última vontade do morto, por testamento, legado ou codicilo, mecanismos sucessórios para exercício da autonomia privada do autor da herança.",
+        "simplified": "Sucessão Testamentária: a pessoa que morreu deixa um documento legal, chamado testamento, que define como seus bens serão distribuídos após sua morte."
+    },
+    {
+        "id": 86,
+        "original": "Legado: é disposição testamentária a título singular, pela qual o testador deixa a pessoa estranha ou não à sucessão legítima um ou mais objetos individualizados ou certa quantia em dinheiro.",
+        "simplified": "Legado: no testamento, o falecido pode deixar bem específico destinado a uma pessoa de sua escolha, seja ela familiar ou não."
+    },
+    {
+        "id": 87,
+        "original": "Nu-proprietário: é a propriedade em que o indivíduo que possui o domínio de um bem imóvel, mas não faz uso dele, sendo o usufruto exercido por outra pessoa.",
+        "simplified": "Nu-proprietário: a pessoa é dona do bem, enquanto uma outra possui o direito de utilizá-lo e aproveitar seus benefícios durante um período."
+    },
+    {
+        "id": 88,
+        "original": "Usufruto: ocorre o usufruto, de forma gratuita ou onerosa, quando o proprietário de um bem móvel ou imóvel destaca da propriedade dois dos seus poderes (usar e fruir), transferindo-se a um terceiro.",
+        "simplified": "Usufruto: é o direito de uma pessoa usar e aproveitar os rendimentos de um bem, mesmo não sendo o proprietário do mesmo."
+    },
+    {
+        "id": 89,
+        "original": "Cota-Parte: quota ou parte que cabe a cada proprietário sobre as coisas comuns, expressa sob forma decimal ou ordinária.",
+        "simplified": "Cota-Parte: é a parte que cada pessoa tem direito de receber de bens ou de direitos."
+    },
+    {
+        "id": 90,
+        "original": "Quinhão Hereditário: é a quota que corresponde ao direito de cada herdeiro. Julgada a partilha, fica o direito de cada um dos herdeiros circunscrito aos bens do seu quinhão.",
+        "simplified": "Quinhão Hereditário: é a parte da herança que cada herdeiro recebe. O tamanho dessa parte é determinado por lei e, se houver, pelo testamento deixado pela pessoa que morreu."
+    },
+    {
+        "id": 91,
+        "original": "Meação Conjugal: é a metade do patrimônio em comunhão do casal, a que faz jus cada um dos cônjuges, a depender do regime de bens adotado na sociedade conjugal.",
+        "simplified": "Meação Conjugal: cada pessoa possui o direito à metade dos bens do casal de acordo com as regras escolhidas para a celebração da união."
+    },
+    {
+        "id": 92,
+        "original": "Cessão de Direitos: a cessão de direitos hereditários, gratuita ou onerosa, consiste na transferência que o herdeiro, legítimo ou testamentário, faz a outrem de todo quinhão ou de parte dele, que lhe compete após a abertura da sucessão.",
+        "simplified": "Cessão de Direitos: é um acordo permitido por lei que autoriza um herdeiro transferir, total ou parcial, sua parte na herança para outra pessoa."
+    },
+    {
+        "id": 93,
+        "original": "Propriedade Fiduciária: considera-se fiduciária a propriedade resolúvel de coisa móvel infungível que o devedor, com escopo de garantia, transfere ao credor.",
+        "simplified": "Propriedade Fiduciária: a pessoa que faz um empréstimo oferece um bem como garantia da dívida."
+    },
+    {
+        "id": 94,
+        "original": "Base de Cálculo do ITCD: a base de cálculo do imposto é o valor venal dos bens ou direitos transmitidos.",
+        "simplified": "Base de Cálculo do ITCD: é o valor de mercado do bem ou direito recebido por herança ou doação."
+    },
+    {
+        "id": 95,
+        "original": "Valor Venal do ITCD: considera-se valor venal o valor de mercado do bem ou direito na data da abertura da sucessão ou da realização do ato ou da celebração do contrato de doação, ou instituição de direito real.",
+        "simplified": "Valor Venal do ITCD: representa o valor de mercado do bem ou direito adquirido por herança ou doação."
+    },
+    {
+        "id": 96,
+        "original": "Alíquota do ITCD: as alíquotas do imposto são as fixadas de acordo com as diferentes faixas de escalonamento da base de cálculo atribuída por fato gerador dos bens transmitidos por doação ou causa mortis.",
+        "simplified": "Alíquota do ITCD: é a porcentagem paga sobre o valor do bem ou do direito recebido por herança ou doação."
+    },
+    {
+        "id": 97,
+        "original": "Guia de Informação e Apuração do ITCD: é um documento de processamento eletrônico de dados - GIA-ITCD Eletrônica, para fins de apuração e cobrança do imposto devido. É obrigatório o preenchimento nos casos de transmissão causa mortis, do herdeiro ou do legatário; do fideicomisso, do fiduciário; na doação, do donatário e na cessão de herança ou de bem ou direito a título não oneroso, do cessionário.",
+        "simplified": "Guia de Informação e Apuração do ITCD: é um formulário digital usado para calcular o imposto sobre herança e doação."
+    },
+    {
+        "id": 98,
+        "original": "Acréscimos Legais: são os valores referentes à multa e juros de mora, incidentes sobre o valor do tributo ou contribuição, quando a obrigação tributária não é cumprida no prazo estabelecido pela legislação.",
+        "simplified": "Acréscimos Legais: são multas e juros cobrados quando o imposto é pago após a data de vencimento."
+    },
+    {
+        "id": 99,
+        "original": "Avaliação Administrativa: é a verificação e avaliação posterior pelo fisco, para apuração do imposto, quando discordar do valor declarado ou atribuído ao bem ou direito transmitido.",
+        "simplified": "Avaliação Administrativa: é quando o Governo do Estado verifica o valor ou preço dos bens ou direitos para calcular o imposto sobre herança ou doação."
+    },
+    {
+        "id": 100,
+        "original": "Revisão de Lançamento: é um pedido de revisão interposto pelo sujeito passivo para impugnar o lançamento tributário. no qual o contribuinte pode contestar os cálculos do ITCD (Imposto sobre Transmissão Causa Mortis e Doação de quaisquer Bens ou Direitos).",
+        "simplified": "Revisão de Lançamento: é o processo pelo qual a pessoa, ao discordar do valor do imposto calculado pelo Governo do Estado, solicita a que o cálculo seja refeito."
+    },
+    {
+        "id": 101,
+        "original": "Recurso Voluntário: é o recurso, de efeito devolutivo, interposto pelo sujeito passivo contra decisão administrativa que indeferir, no todo ou em parte, o pedido de revisão de lançamento.",
+        "simplified": "Recurso Voluntário: é um pedido de revisão solicitado pela pessoa ao Governo do Estado, para reduzir ou anular o valor do imposto."
+    }
+]
